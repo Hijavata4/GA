@@ -17,32 +17,34 @@ namespace LoadSheddingGAOptimization
     {
         private List<Consumer> lstConsumers = new List<Consumer>();
         private List<Generator> lstGens = new List<Generator>();
-        private bool ItemsNotLoaded = true;
-        private bool ListsNotFilled = true;
-        private bool StopGa = false;
+        private bool IsXmlNotLoaded = true;
+        private bool IsViewListsFilled = false;
+        private bool StopGa;// = false;
         private String On = "0";
         private String Off = "1";
         private int Generation= 0;
         private int BestFitAtGeneneration = 0;
         private int BestFitChangeRate = 0;
+        private int NumberOfIterations = 150;
         private Random random = new Random();
 
         private List<Chromosome> Population = new List<Chromosome>();
+        private List<Chromosome> XCV = new List<Chromosome>();
         private Chromosome newChromosome1;
         private Chromosome newChromosome2;
         private Chromosome Child1;
         private Chromosome Child2;
-        private Chromosome bestFit;
+        private Chromosome bestFit =null;
 
         private DateTime StartTime = new DateTime();
         private DateTime BestFitTime = new DateTime();
         private DateTime EndTime = new DateTime();
 
-        public float SheddLoad =0;
+        public double SheddLoad =0;
 
-        private float SumOfOffLoads(List<Consumer> lstCons)
+        private double SumOfSheddloads(List<Consumer> lstCons)
         {
-            float sum = 0;
+            double sum = 0;
             for (int i = 0; i < lstCons.Count; i++)
             {
                 if (lstCons[i].On_Off == 1)
@@ -50,13 +52,16 @@ namespace LoadSheddingGAOptimization
                     sum += lstCons[i].Load;
                 }
             }
-            return sum;
+            return Math.Round(sum,1);
         }
 
-        void GeneticAlgorithm(List<Consumer> lstCons, float sheddLoad)
+        void GeneticAlgorithm(List<Consumer> lstCons, double sheddLoad)
         {
+            bestFit = null;
             StartTime = DateTime.Now;
-            Invoke(new EventHandler(UpdateStartTimeLabel)); 
+            Invoke(new EventHandler(UpdateUIStartTimeLabel)); 
+            StopGa = false;
+            Population.Clear();
             Generation = 1;
             BestFitChangeRate = 0;
 
@@ -79,59 +84,64 @@ namespace LoadSheddingGAOptimization
             newChromosome2 = null;
 
             FitnessComparer comp = new FitnessComparer();
-            comp.sheddLoad =sheddLoad;
             Population.Sort(comp);
 
             bestFit = Population[0];
+            BestFitTime = DateTime.Now;
             Invoke(new EventHandler(UpdateUIGenLabel));
             Invoke(new EventHandler(UpdateUIBestFitLabels));
             Invoke(new EventHandler(UpdateUIChart));
 
             while (StopGa == false)
             {
-                PointCrossover(Population[0], Population[1], sheddLoad);
+                UniformCrossover2(ParentSelectionTS(Population), ParentSelectionTS(Population), sheddLoad);//UniformCrossover1(bestFit, Population[random.Next(Population.Count)], sheddLoad);
 
                 Population.Add(Child1);
                 Population.Add(Child2);
 
-                UniformCrossover(Population[0], Population[2], sheddLoad);
+                UniformCrossover2(ParentSelectionTS(Population), ParentSelectionTS(Population), sheddLoad);//UniformCrossover2(bestFit, Population[random.Next(Population.Count)], sheddLoad);
                 Population.Add(Child1);
                 Population.Add(Child2);
 
                 Population.Sort(comp);
 
-                for (int i=0; i < Population.Count; i++)
-                {
-                    if (Population[i].fitness < bestFit.fitness )
-                    {
-                        BestFitChangeRate = 0;
-                        bestFit = Population[i];
-                        BestFitAtGeneneration = Generation;
-                        BestFitTime = DateTime.Now;
-                        Invoke(new EventHandler(UpdateUIBestFitLabels)); 
-                    }
-                    //else if(Population[i].fitness == bestFit.fitness && SumOfOffLoads(Population[i].Chrome)> sheddLoad)
-                    //{
-                    //    BestFitChangeRate = 0;
-                    //    bestFit = Population[i];
-                    //    BestFitAtGeneneration = Generation;
-                    //    BestFitTime = DateTime.Now;
-                    //    Invoke(new EventHandler(UpdateUIBestFitLabels));
-                    //}
-                }          
+                //for (int i=0; i < Population.Count; i++)
+                //{
+                //    if (Population[i].fitness < bestFit.fitness)
+                //    {
+                //        BestFitChangeRate = 0;
+                //        bestFit.Chromos = Population[i].Chromos;
+                //        bestFit.SetFitness(sheddLoad);
+                //        BestFitAtGeneneration = Generation;
+                //        BestFitTime = DateTime.Now;
+                //        Invoke(new EventHandler(UpdateUIBestFitLabels));              
+                //    }
+                //    Population[i].IncrementAge();                    
+                //}  
 
+                if(Population[0].fitness < bestFit.fitness)
+                {
+                    BestFitChangeRate = 0;
+                    bestFit = Population[0];
+                    BestFitAtGeneneration = Generation;
+                    BestFitTime = DateTime.Now;
+                    Invoke(new EventHandler(UpdateUIBestFitLabels));
+                }
+
+                SurvivorSelectionFitnessBased(Population);
                 StopGa = StopGAoptimization();
                 Invoke(new EventHandler(UpdateUIGenLabel));
                 Invoke(new EventHandler(UpdateUIChart));
                 Generation++;
                 BestFitChangeRate++;
-                if (Population.Count > 50)
-                {
-                    Population.RemoveRange(40, Population.Count-40);
-                }
+
+                //SurvivorSelectionAgeBased(Population);
+                             
             }
+            XCV = Population;
             EndTime = DateTime.Now;
             Invoke(new EventHandler(UpdateUIConsumerList));
+            Invoke(new EventHandler(UpdateUIBestFitLabels));
         }
 
         private bool StopGAoptimization()
@@ -140,7 +150,7 @@ namespace LoadSheddingGAOptimization
             {
                 return true;
             }
-            else if (Generation < 1000)
+            else if (Generation < NumberOfIterations)
             {
                 return false;
             }
@@ -150,67 +160,123 @@ namespace LoadSheddingGAOptimization
             }
         }
 
-        private void PointCrossover(Chromosome Chrome1, Chromosome Chrome2, float sheddLoad)
+        private void UniformCrossover1(Chromosome Chromos1, Chromosome Chromos2, double sheddLoad)
         {
             Child1 = null;
             Child2 = null;
 
-            Child1 = new Chromosome(Chrome1.Chrome, sheddLoad, false);
-            Child2 = new Chromosome(Chrome2.Chrome, sheddLoad, false);
-            for (int i = 0; i <= (Chrome1.Chrome.Count / 2); i++)
+            Child1 = new Chromosome(Chromos1.Chromos, sheddLoad, false);
+            Child2 = new Chromosome(Chromos2.Chromos, sheddLoad, false);
+            for (int i = 0; i < Chromos1.Chromos.Count; i++)
             {
-                if (Chrome1.Chrome[i].On_Off != Chrome2.Chrome[i].On_Off)
+                if (i % 3 == 0)
                 {
-                    Child1.Chrome[i].On_Off = Chrome2.Chrome[i].On_Off;
+                    if (Chromos1.Chromos[i].On_Off != Chromos2.Chromos[i].On_Off)
+                    {
+                        Child1.Chromos[i].On_Off = Chromos2.Chromos[i].On_Off;
+                    }
+                }  
+            }
+
+            for (int k = 0; k < Chromos1.Chromos.Count ; k++)
+            {
+                if (k % 3 != 0)
+                {
+                    if (Chromos1.Chromos[k].On_Off != Chromos2.Chromos[k].On_Off)
+                    {
+                        Child2.Chromos[k].On_Off = Chromos1.Chromos[k].On_Off;
+                    }
                 }
             }
 
-            for (int k = Chrome1.Chrome.Count - 1; k > (Chrome1.Chrome.Count / 2); k--)
+            if(random.Next(0,100)< 25)
             {
-                if (Chrome1.Chrome[k].On_Off != Chrome2.Chrome[k].On_Off)
+                Child1.Mutate(sheddLoad);
+            }
+            if (random.Next(0, 100) < 25)
+            {
+                Child2.Mutate(sheddLoad);
+            }
+            
+            Child1.SetFitness(sheddLoad);
+            Child2.SetFitness(sheddLoad);
+        }
+
+        private void UniformCrossover2(Chromosome Chromos1, Chromosome Chromos2,double sheddLoad)
+        {
+            Child1 = null;
+            Child2 = null;
+            Child1 = new Chromosome(Chromos1.Chromos, sheddLoad, false);
+            Child2 = new Chromosome(Chromos2.Chromos, sheddLoad, false);
+
+            for (int i = 0; i < Chromos1.Chromos.Count; i+=2)
+            {
+                if (Chromos1.Chromos[i].On_Off != Chromos2.Chromos[i].On_Off)
                 {
-                    Child2.Chrome[k].On_Off = Chrome1.Chrome[k].On_Off;
+                    Child1.Chromos[i].On_Off = Chromos2.Chromos[i].On_Off;
                 }
             }
-            Child1.Mutate(sheddLoad);
-            Child2.Mutate(sheddLoad);
+            for (int k =1; k < Chromos1.Chromos.Count ; k+=2)
+            {
+                if (Chromos1.Chromos[k].On_Off != Chromos2.Chromos[k].On_Off)
+                {
+                    Child2.Chromos[k].On_Off = Chromos1.Chromos[k].On_Off;
+                }
+            }
+            if (random.Next(0, 100) < 25)
+            {
+                Child1.Mutate(sheddLoad);
+            }
+            if (random.Next(0, 100) < 25)
+            {
+                Child2.Mutate(sheddLoad);
+            }
 
             Child1.SetFitness(sheddLoad);
             Child2.SetFitness(sheddLoad);
         }
 
-        private void UniformCrossover(Chromosome Chrome1, Chromosome Chrome2,float sheddLoad)
+        private Chromosome ParentSelectionTS(List<Chromosome> population)
         {
-            Child1 = null;
-            Child2 = null;
-            Child1 = new Chromosome(Chrome1.Chrome, sheddLoad, false);
-            Child2 = new Chromosome(Chrome2.Chrome, sheddLoad, false);
+            List<Chromosome> parentSelList = new List<Chromosome>(); 
 
-            for (int i = 0; i < Chrome1.Chrome.Count; i+=2)
-            {
-                if (Chrome1.Chrome[i].On_Off != Chrome2.Chrome[i].On_Off)
-                {
-                    Child1.Chrome[i].On_Off = Chrome2.Chrome[i].On_Off;
-                }
-            }
-            for (int k =1; k < Chrome1.Chrome.Count ; k+=2)
-            {
-                if (Chrome1.Chrome[k].On_Off != Chrome2.Chrome[k].On_Off)
-                {
-                    Child2.Chrome[k].On_Off = Chrome1.Chrome[k].On_Off;
-                }
-            }
-            Child1.Mutate(sheddLoad);
-            Child2.Mutate(sheddLoad);
+            parentSelList.Add(population[random.Next(0, population.Count)]);
+            parentSelList.Add(population[random.Next(0, population.Count)]);
+            parentSelList.Add(population[random.Next(0, population.Count)]);
 
-            Child1.SetFitness(sheddLoad);
-            Child2.SetFitness(sheddLoad);
+            return GetBestFitFromList(parentSelList);
         }
 
-
-        void InitializeGens(string xState, string xName)
+        private Chromosome GetBestFitFromList(List<Chromosome> parentSelList)
         {
-            if (String.Equals(xName, "1"))
+            FitnessComparer comp = new FitnessComparer();
+            parentSelList.Sort(comp);
+            return parentSelList[0];
+        }
+
+        private void SurvivorSelectionAgeBased(List<Chromosome> population)
+        {
+            for (int i = 0; i < population.Count; i++)
+            {
+                if (population[i].Age >= 10)
+                {
+                    population.Remove(population[i]);
+                    i--;
+                }
+            }
+        }
+
+        private void SurvivorSelectionFitnessBased(List<Chromosome> population)
+        {
+            if(population.Count == 32)
+            {
+                population.RemoveRange(16, 16);
+            }
+        }
+
+        void InitializeGens(string xState, string name)
+        {
+            if (String.Equals(name, "1"))
             {
                 if (String.Equals(xState, On))
                 {
@@ -221,7 +287,7 @@ namespace LoadSheddingGAOptimization
                     btnGen1.BackColor = Color.Red;
                 }
             }
-            if (String.Equals(xName, "2"))
+            if (String.Equals(name, "2"))
             {
                 if (String.Equals(xState, On))
                 {
@@ -232,7 +298,7 @@ namespace LoadSheddingGAOptimization
                     btnGen2.BackColor = Color.Red;
                 }
             }
-            if (String.Equals(xName, "3"))
+            if (String.Equals(name, "3"))
             {
                 if (String.Equals(xState, On))
                 {
@@ -243,7 +309,7 @@ namespace LoadSheddingGAOptimization
                     btnGen3.BackColor = Color.Red;
                 }
             }
-            if (String.Equals(xName, "4"))
+            if (String.Equals(name, "4"))
             {
                 if (String.Equals(xState, On))
                 {
@@ -254,7 +320,7 @@ namespace LoadSheddingGAOptimization
                     btnGen4.BackColor = Color.Red;
                 }
             }
-            if (String.Equals(xName, "5"))
+            if (String.Equals(name, "5"))
             {
                 if (String.Equals(xState, On))
                 {
@@ -265,7 +331,7 @@ namespace LoadSheddingGAOptimization
                     btnGen5.BackColor = Color.Red;
                 }
             }
-            if (String.Equals(xName, "6"))
+            if (String.Equals(name, "6"))
             {
                 if (String.Equals(xState, On))
                 {
@@ -278,16 +344,14 @@ namespace LoadSheddingGAOptimization
             }
         }
 
-
         public Form1()
         {
             InitializeComponent();
         }
 
-
         private void btnXMLloader_Click(object sender, EventArgs e)
         {
-            if (ItemsNotLoaded)
+            if (IsXmlNotLoaded)
             {
                 panel1.Visible = true;
                 XmlDocument doc = new XmlDocument();
@@ -311,7 +375,7 @@ namespace LoadSheddingGAOptimization
                     InitializeGens(Convert.ToString(gen.On_Off), gen.Name);
                     lstGens.Add(gen);
                 }
-                ItemsNotLoaded = false;
+                IsXmlNotLoaded = false;
                 MessageBox.Show("Consumer and generators loaded!");
             }
             else
@@ -322,28 +386,36 @@ namespace LoadSheddingGAOptimization
 
         private void btnShowList_Click(object sender, EventArgs e)
         {
-            if (ListsNotFilled)
+            if (IsXmlNotLoaded ==false)
             {
-                for (int i = 0; i < lstConsumers.Count; i++)
+                if (IsViewListsFilled)
                 {
-                    ListViewItem item = new ListViewItem(lstConsumers[i].Name);
-                    item.SubItems.Add(Convert.ToString(lstConsumers[i].On_Off));
-                    item.SubItems.Add(Convert.ToString(lstConsumers[i].Load));
-                    item.SubItems.Add(Convert.ToString(lstConsumers[i].Priority));
-                    listViewCons.Items.Add(item);
+                    MessageBox.Show("List already filled!");
                 }
-                for (int i = 0; i < lstGens.Count; i++)
+                else
                 {
-                    ListViewItem item = new ListViewItem(lstGens[i].Name);
-                    item.SubItems.Add(Convert.ToString(lstGens[i].P));
-                    item.SubItems.Add(Convert.ToString(lstGens[i].On_Off));
-                    listViewGen.Items.Add(item);
+                    for (int i = 0; i < lstConsumers.Count; i++)
+                    {
+                        ListViewItem item = new ListViewItem(lstConsumers[i].Name);
+                        item.SubItems.Add(Convert.ToString(lstConsumers[i].On_Off));
+                        item.SubItems.Add(Convert.ToString(lstConsumers[i].Load));
+                        item.SubItems.Add(Convert.ToString(lstConsumers[i].Priority));
+                        listViewCons.Items.Add(item);
+                    }
+                    for (int i = 0; i < lstGens.Count; i++)
+                    {
+                        ListViewItem item = new ListViewItem(lstGens[i].Name);
+                        item.SubItems.Add(Convert.ToString(lstGens[i].P));
+                        item.SubItems.Add(Convert.ToString(lstGens[i].On_Off));
+                        listViewGen.Items.Add(item);
+                    }
+                    IsViewListsFilled = true;
                 }
-                ListsNotFilled = false;
+
             }
             else
             {
-                MessageBox.Show("List already filled!");
+                MessageBox.Show("Xml Not Loaded!");
             }
         }
 
@@ -484,7 +556,7 @@ namespace LoadSheddingGAOptimization
 
         private void btnLoadShedding_Click(object sender, EventArgs e)
         {
-            float Sum = 0;
+            double Sum = 0;
             for (int i = 0; i < lstGens.Count; i++)
             {
                 if (lstGens[i].On_Off == 1)
@@ -506,33 +578,25 @@ namespace LoadSheddingGAOptimization
         {
             GeneticAlgorithm(lstConsumers, SheddLoad);
         }
+
         private void UpdateUIGenLabel(object sender, EventArgs e)
         {
             lbGenNum.Text = Convert.ToString(Generation);
         }
+
+        private void UpdateUIStartTimeLabel(object sender, EventArgs e)
+        {
+            lbStartTime.Text = Convert.ToString(StartTime.TimeOfDay); 
+        }
+
         private void UpdateUIBestFitLabels(object sender, EventArgs e)
         {
-            lbBestFit.Text = Convert.ToString(bestFit.fitness);
+            lbBestFit.Text = Convert.ToString(bestFit.fitness);//.ToString("0.00");
             lbBestFitGen.Text = Convert.ToString(BestFitAtGeneneration);
-            lbLoadShedd.Text = Convert.ToString(SumOfOffLoads(bestFit.Chrome));
-            lbBestFitTime.Text = Convert.ToString(BestFitTime.TimeOfDay);
-            //listViewCons.Items.Clear();
-
-            //for (int i = 0; i < bestFit.Chrome.Count; i++)
-            //{
-            //    ListViewItem item = new ListViewItem(bestFit.Chrome[i].Name);
-            //    item.SubItems.Add(Convert.ToString(bestFit.Chrome[i].On_Off));
-            //    item.SubItems.Add(Convert.ToString(bestFit.Chrome[i].Load));
-            //    item.SubItems.Add(Convert.ToString(bestFit.Chrome[i].Priority));
-            //    listViewCons.Items.Add(item);
-            //}
-        }
-        private void UpdateStartTimeLabel(object sender, EventArgs e)
-        {
-            lbStartTime.Text = Convert.ToString(StartTime.TimeOfDay);
+            lbLoadShedd.Text = Convert.ToString(SumOfSheddloads(bestFit.Chromos)); //SumOfSheddloads(bestFit.Chromos).ToString("0.00"); 
+            lbBestFitTime.Text = Convert.ToString((BestFitTime - StartTime).TotalSeconds);
         }
         
-
         private void UpdateUIChart(object sender, EventArgs e)
         {
             chart1.Series["BestFit"].Points.AddXY(Generation,bestFit.fitness);
@@ -540,22 +604,24 @@ namespace LoadSheddingGAOptimization
 
         private void UpdateUIConsumerList(object sender, EventArgs e)
         {
+            lbEndTime.Text = Convert.ToString((EndTime - StartTime).TotalSeconds);
+            lbGenNum.Text = Convert.ToString(Generation);
+            Thread.Sleep(10);
             listViewCons.Items.Clear();
 
-            for (int i = 0; i < bestFit.Chrome.Count; i++)
+            for (int i = 0; i < bestFit.Chromos.Count; i++)
             {
-                ListViewItem item = new ListViewItem(bestFit.Chrome[i].Name);
-                item.SubItems.Add(Convert.ToString(bestFit.Chrome[i].On_Off));
-                item.SubItems.Add(Convert.ToString(bestFit.Chrome[i].Load));
-                item.SubItems.Add(Convert.ToString(bestFit.Chrome[i].Priority));
+                ListViewItem item = new ListViewItem(bestFit.Chromos[i].Name);
+                item.SubItems.Add(Convert.ToString(bestFit.Chromos[i].On_Off));
+                item.SubItems.Add(Convert.ToString(bestFit.Chromos[i].Load));
+                item.SubItems.Add(Convert.ToString(bestFit.Chromos[i].Priority));
                 listViewCons.Items.Add(item);
-            }
-            lbEndTime.Text = Convert.ToString(EndTime.TimeOfDay);
+            }            
         }
 
         private void btnLoadXMLL_Click(object sender, EventArgs e)
         {
-            if (ItemsNotLoaded)
+            if (IsXmlNotLoaded)
             {
                 panel2.Visible = true;
                 XmlDocument doc = new XmlDocument();
@@ -579,7 +645,7 @@ namespace LoadSheddingGAOptimization
                     InitializeGens1(Convert.ToString(gen.On_Off), gen.Name);
                     lstGens.Add(gen);
                 }
-                ItemsNotLoaded = false;
+                IsXmlNotLoaded = false;
                 MessageBox.Show("Consumer and generators loaded!");
             }
             else
@@ -587,9 +653,10 @@ namespace LoadSheddingGAOptimization
                 MessageBox.Show("Items loaded!");
             }
         }
-        void InitializeGens1(string xState, string xName)
+
+        void InitializeGens1(string xState, string name)
         {
-            if (String.Equals(xName, "1"))
+            if (String.Equals(name, "1"))
             {
                 if (String.Equals(xState, On))
                 {
@@ -600,7 +667,7 @@ namespace LoadSheddingGAOptimization
                     btnGenX1.BackColor = Color.Red;
                 }
             }
-            if (String.Equals(xName, "2"))
+            if (String.Equals(name, "2"))
             {
                 if (String.Equals(xState, On))
                 {
@@ -611,7 +678,7 @@ namespace LoadSheddingGAOptimization
                     btnGenX2.BackColor = Color.Red;
                 }
             }
-            if (String.Equals(xName, "3"))
+            if (String.Equals(name, "3"))
             {
                 if (String.Equals(xState, On))
                 {
@@ -622,7 +689,7 @@ namespace LoadSheddingGAOptimization
                     btnGenX3.BackColor = Color.Red;
                 }
             }
-            if (String.Equals(xName, "4"))
+            if (String.Equals(name, "4"))
             {
                 if (String.Equals(xState, On))
                 {
@@ -633,7 +700,7 @@ namespace LoadSheddingGAOptimization
                     btnGenX4.BackColor = Color.Red;
                 }
             }
-            if (String.Equals(xName, "5"))
+            if (String.Equals(name, "5"))
             {
                 if (String.Equals(xState, On))
                 {
@@ -644,7 +711,7 @@ namespace LoadSheddingGAOptimization
                     btnGenX5.BackColor = Color.Red;
                 }
             }
-            if (String.Equals(xName, "6"))
+            if (String.Equals(name, "6"))
             {
                 if (String.Equals(xState, On))
                 {
@@ -655,7 +722,7 @@ namespace LoadSheddingGAOptimization
                     btnGenX6.BackColor = Color.Red;
                 }
             }
-            if (String.Equals(xName, "7"))
+            if (String.Equals(name, "7"))
             {
                 if (String.Equals(xState, On))
                 {
@@ -666,7 +733,7 @@ namespace LoadSheddingGAOptimization
                     btnGenX7.BackColor = Color.Red;
                 }
             }
-            if (String.Equals(xName, "8"))
+            if (String.Equals(name, "8"))
             {
                 if (String.Equals(xState, On))
                 {
@@ -677,7 +744,7 @@ namespace LoadSheddingGAOptimization
                     btnGenX8.BackColor = Color.Red;
                 }
             }
-            if (String.Equals(xName, "9"))
+            if (String.Equals(name, "9"))
             {
                 if (String.Equals(xState, On))
                 {
@@ -688,7 +755,7 @@ namespace LoadSheddingGAOptimization
                     btnGenX9.BackColor = Color.Red;
                 }
             }
-            if (String.Equals(xName, "10"))
+            if (String.Equals(name, "10"))
             {
                 if (String.Equals(xState, On))
                 {
@@ -699,7 +766,7 @@ namespace LoadSheddingGAOptimization
                     btnGenX10.BackColor = Color.Red;
                 }
             }
-            if (String.Equals(xName, "11"))
+            if (String.Equals(name, "11"))
             {
                 if (String.Equals(xState, On))
                 {
@@ -710,7 +777,7 @@ namespace LoadSheddingGAOptimization
                     btnGenX11.BackColor = Color.Red;
                 }
             }
-            if (String.Equals(xName, "12"))
+            if (String.Equals(name, "12"))
             {
                 if (String.Equals(xState, On))
                 {
@@ -721,7 +788,7 @@ namespace LoadSheddingGAOptimization
                     btnGenX12.BackColor = Color.Red;
                 }
             }
-            if (String.Equals(xName, "13"))
+            if (String.Equals(name, "13"))
             {
                 if (String.Equals(xState, On))
                 {
@@ -732,7 +799,7 @@ namespace LoadSheddingGAOptimization
                     btnGenX13.BackColor = Color.Red;
                 }
             }
-            if (String.Equals(xName, "14"))
+            if (String.Equals(name, "14"))
             {
                 if (String.Equals(xState, On))
                 {
@@ -743,7 +810,7 @@ namespace LoadSheddingGAOptimization
                     btnGenX14.BackColor = Color.Red;
                 }
             }
-            if (String.Equals(xName, "15"))
+            if (String.Equals(name, "15"))
             {
                 if (String.Equals(xState, On))
                 {
@@ -754,7 +821,7 @@ namespace LoadSheddingGAOptimization
                     btnGenX15.BackColor = Color.Red;
                 }
             }
-            if (String.Equals(xName, "16"))
+            if (String.Equals(name, "16"))
             {
                 if (String.Equals(xState, On))
                 {
@@ -765,7 +832,7 @@ namespace LoadSheddingGAOptimization
                     btnGenX16.BackColor = Color.Red;
                 }
             }
-            if (String.Equals(xName, "17"))
+            if (String.Equals(name, "17"))
             {
                 if (String.Equals(xState, On))
                 {
@@ -776,7 +843,7 @@ namespace LoadSheddingGAOptimization
                     btnGenX17.BackColor = Color.Red;
                 }
             }
-            if (String.Equals(xName, "18"))
+            if (String.Equals(name, "18"))
             {
                 if (String.Equals(xState, On))
                 {
@@ -1183,6 +1250,38 @@ namespace LoadSheddingGAOptimization
                     }
                 }
             }
+        }
+
+        private void btnReset_Click(object sender, EventArgs e)
+        {
+            ResetAllLabels(sender, e);
+
+            chart1.Series["BestFit"].Points.Clear();
+            panel1.Visible = false;
+            panel2.Visible = false;
+            IsViewListsFilled = false;
+            IsXmlNotLoaded = true;
+            lstConsumers.Clear();
+            lstGens.Clear();
+            listViewCons.Items.Clear();
+            listViewGen.Items.Clear();
+        }
+
+        private void ResetAllLabels(object sender, EventArgs e)
+        {
+            lbBestFit.Text = "0";
+            lbBestFitGen.Text = "0";
+            lbGenNum.Text = "0";
+            lbLoadToBeShedd.Text = "0";
+            lbLoadShedd.Text = "0";
+            lbEndTime.Text = "0";
+            lbStartTime.Text = "0";
+            lbBestFitTime.Text = "0";
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            NumberOfIterations = Convert.ToInt32(textBox1.Text);
         }
     }
 }

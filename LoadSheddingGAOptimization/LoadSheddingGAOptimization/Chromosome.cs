@@ -8,43 +8,46 @@ namespace LoadSheddingGAOptimization
 {
     class Chromosome
     {
-        public List<Consumer> Chrome;
-        public int fitness;
+        public List<Consumer> Chromos;
+        public double fitness;
+        public int Age;
 
-        public Chromosome(List<Consumer> _chrome, float loadToBeShedd, bool Init)
+        public Chromosome(List<Consumer> chromos, double loadToBeShedd, bool Init)
         {
             if (Init)
             {
-                Chrome = InitializeChromesome(_chrome, loadToBeShedd);
-                fitness = Convert.ToInt32(ClalculateFitness(loadToBeShedd));
+                Chromos = InitializeChromossome(chromos, loadToBeShedd);
+                fitness = ClalculateFitness(loadToBeShedd);
+                Age = 0;
             }
             else
             {
-                Chrome = _chrome;
+                Chromos = chromos;
+                Age = 0;
             }
         }
 
-        private List<Consumer> InitializeChromesome(List<Consumer> lst, float loadToBeShedd)
+        private List<Consumer> InitializeChromossome(List<Consumer> lst, double loadToBeShedd)
         {
-            Chrome = lst;
-            for (int i = 0; i < InitializeOrMutateByPriority(loadToBeShedd); i++)
+            Chromos = lst;
+            for (int i = 0; i < NumbOfConsByPriority(InitializeOrMutateByPriority(loadToBeShedd)); i++)
             {
                 lst[i].radnomOnOF();
             }
             return lst;
         }
 
-        private float ClalculateFitness(float loadToBeShedd)
+        private double ClalculateFitness(double loadToBeShedd)
         {
             return Convert.ToInt32(Math.Abs(GetSumOfSheddLoad() - loadToBeShedd));
         }
 
-        public void SetFitness(float loadToBeShedd)
+        public void SetFitness(double loadToBeShedd)
         {
-            fitness = Convert.ToInt32(Math.Abs(GetSumOfSheddLoad() - loadToBeShedd));
+            fitness = Math.Round(Math.Abs(GetSumOfSheddLoad() - loadToBeShedd), 1);
         }        
 
-        public void Mutate(float loadToBeShedd)
+        public void Mutate(double loadToBeShedd)
         {
             int priority = 0;
             priority = InitializeOrMutateByPriority(loadToBeShedd);
@@ -53,22 +56,83 @@ namespace LoadSheddingGAOptimization
                 if (GetSumOfSheddLoad() < loadToBeShedd)
                 {
                     int c;
+                    bool change = true;
                     Random x = new Random();
                     for (int i = 0; i < 3; i++)
                     {
                         c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));        //Next(InitializeOrMutateByPriority(loadToBeShedd));
-                        Chrome[c].MutateGeneON();
+                        Chromos[c].MutateGeneClose();
+                    }
+                    while (GetSumOfSheddLoad() < loadToBeShedd)
+                    {
+                        c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));
+                        if (change)
+                        {
+                            for (int i = c; i < EndIndexInListOfPriority(priority); i++)
+                            {
+                                if (Chromos[i].On_Off == 0)
+                                {
+                                    Chromos[i].MutateGeneClose();
+                                    break;
+                                }
+
+                            }
+                            change = false;
+                        }
+                        else
+                        {
+                            for (int i = c; i > StartIndexInListOfPriority(priority); i--)
+                            {
+                                if (Chromos[i].On_Off == 0)
+                                {
+                                    Chromos[i].MutateGeneClose();
+                                    break;
+                                }
+                            }
+                            change = true;
+                        }
                     }
                 }
                 else
                 {
                     int c;
+                    bool change = true;
                     Random x = new Random();
                     for (int i = 0; i < 3; i++)
                     {
                         c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));
-                        Chrome[c].MutateGeneOFF();
+                        Chromos[c].MutateGeneOpen();
                     }
+                    while (GetSumOfSheddLoad() < loadToBeShedd)
+                    {
+                        c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));
+                        if (change)
+                        {
+                            for (int i = c; i < EndIndexInListOfPriority(priority); i++)
+                            {
+                                if (Chromos[i].On_Off == 0)
+                                {
+                                    Chromos[i].MutateGeneClose();
+                                    break;
+                                }
+                            }
+                            change = false;
+                        }
+                        else
+                        {
+                            for (int i = c; i > StartIndexInListOfPriority(priority); i--)
+                            {
+                                if (Chromos[i].On_Off == 0)
+                                {
+                                    Chromos[i].MutateGeneClose();
+                                    break;
+                                }
+
+                            }
+                            change = true;
+                        }
+                    }
+
                 }
             }
             else if(priority ==2)
@@ -77,21 +141,79 @@ namespace LoadSheddingGAOptimization
                 if (GetSumOfSheddLoad() < loadToBeShedd)
                 {
                     int c;
+                    bool change = true;
                     Random x = new Random();
                     for (int i = 0; i < 3; i++)
                     {
                         c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));        //Next(InitializeOrMutateByPriority(loadToBeShedd));
-                        Chrome[c].MutateGeneON();
+                        Chromos[c].MutateGeneClose();
+                    }
+                    while (GetSumOfSheddLoad() < loadToBeShedd)
+                    {
+                        c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));
+                        if (change)
+                        {
+                            for (int i = c; i < EndIndexInListOfPriority(priority); i++)
+                            {
+                                if (Chromos[i].On_Off == 0)
+                                {
+                                    Chromos[i].MutateGeneClose();
+                                    break;
+                                }
+                            }
+                            change = false;
+                        }
+                        else
+                        {
+                            for (int i = c; i > StartIndexInListOfPriority(priority); i--)
+                            {
+                                if (Chromos[i].On_Off == 0)
+                                {
+                                    Chromos[i].MutateGeneClose();
+                                    break;
+                                }
+                            }
+                            change = true;
+                        }
                     }
                 }
                 else
                 {
                     int c;
+                    bool change = true;
                     Random x = new Random();
                     for (int i = 0; i < 3; i++)
                     {
                         c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));
-                        Chrome[c].MutateGeneOFF();
+                        Chromos[c].MutateGeneOpen();
+                    }
+                    while (GetSumOfSheddLoad() < loadToBeShedd)
+                    {
+                        c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));
+                        if (change)
+                        {
+                            for (int i = c; i < EndIndexInListOfPriority(priority); i++)
+                            {
+                                if (Chromos[i].On_Off == 0)
+                                {
+                                    Chromos[i].MutateGeneClose();
+                                    break;
+                                }
+                            }
+                            change = false;
+                        }
+                        else
+                        {
+                            for (int i = c; i > StartIndexInListOfPriority(priority); i--)
+                            {
+                                if (Chromos[i].On_Off == 0)
+                                {
+                                    Chromos[i].MutateGeneClose();
+                                    break;
+                                }
+                            }
+                            change = true;
+                        }
                     }
                 }
             }
@@ -101,54 +223,113 @@ namespace LoadSheddingGAOptimization
                 if(GetSumOfSheddLoad() < loadToBeShedd)
                 {
                     int c;
+                    bool change = true;
                     Random x = new Random();
                     for (int i = 0; i < 3; i++)
                     {
                         c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));        //Next(InitializeOrMutateByPriority(loadToBeShedd));
-                        Chrome[c].MutateGeneON();
+                        Chromos[c].MutateGeneClose();
+                    }
+                    while (GetSumOfSheddLoad() < loadToBeShedd)
+                    {
+                        c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));
+                        if (change)
+                        {
+                            for (int i = c; i < EndIndexInListOfPriority(priority); i++)
+                            {
+                                if (Chromos[i].On_Off == 0)
+                                {
+                                    Chromos[i].MutateGeneClose();
+                                    break;
+                                }
+                            }
+                            change = false;
+                        }
+                        else
+                        {
+                            for (int i = c; i > StartIndexInListOfPriority(priority); i--)
+                            {
+                                if (Chromos[i].On_Off == 0)
+                                {
+                                    Chromos[i].MutateGeneClose();
+                                    break;
+                                }
+                            }
+                            change = true;
+                        }
                     }
                 }
                 else
                 {
                     int c;
+                    bool change = true;
                     Random x = new Random();
                     for (int i = 0; i < 3; i++)
                     {
                         c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));
-                        Chrome[c].MutateGeneOFF();
+                        Chromos[c].MutateGeneOpen();
+                    }
+                    while (GetSumOfSheddLoad() < loadToBeShedd)
+                    {
+                        c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));
+                        if (change)
+                        {
+                            for (int i = c; i < EndIndexInListOfPriority(priority); i++)
+                            {
+                                if (Chromos[i].On_Off == 0)
+                                {
+                                    Chromos[i].MutateGeneClose();
+                                    break;
+                                }
+                            }
+                            change = false;
+                        }
+                        else
+                        {
+                            for (int i = c; i > StartIndexInListOfPriority(priority); i--)
+                            {
+                                if (Chromos[i].On_Off == 0)
+                                {
+                                    Chromos[i].MutateGeneClose();
+                                    break;
+                                }
+                            }
+                            change = true;
+                        }
                     }
                 }
             }
         }
-        public float GetSumOfSheddLoad()
+
+        private double GetSumOfSheddLoad()
         {
-            float sum = 0;
-            for (int i = 0; i < Chrome.Count; i++)
+            double sum = 0.0f;
+            for (int i = 0; i < Chromos.Count; i++)
             {
-                if (Chrome[i].On_Off == 1)
+                if (Chromos[i].On_Off == 1)
                 {
-                    sum += Chrome[i].Load;
+                    sum += Chromos[i].Load;
                 }
             }
-            return sum;
+            return Math.Round(sum,1);
         }
 
-        public int InitializeOrMutateByPriority(float loadToBeShedd)
+        public int InitializeOrMutateByPriority(double loadToBeShedd)
         {
-            float sum =0;
-            for (int i = 0; i < Chrome.Count; i++)
+            double sum =0;
+            for (int i = 0; i < Chromos.Count; i++)
             {
-                if (Chrome[i].Priority == 1)
+                if (Chromos[i].Priority == 1)
                 {
-                    sum += Chrome[i].Load;
+                    sum += Chromos[i].Load;
                     if (sum > loadToBeShedd)
                     {
                         return 1;
                     }
                 }
-                else if (Chrome[i].Priority == 2)
+                else if (Chromos[i].Priority == 2)
                 {
-                    sum += Chrome[i].Load;
+                    sum += Chromos[i].Load;
                     if (sum > loadToBeShedd)
                     {
                         return 2;
@@ -167,9 +348,9 @@ namespace LoadSheddingGAOptimization
             int count = 0;
             if(priority == 1)
             {
-                for (int i = 0; i < Chrome.Count; i++)
+                for (int i = 0; i < Chromos.Count; i++)
                 {
-                    if (Chrome[i].Priority == 1)
+                    if (Chromos[i].Priority == 1)
                     {
                         count++;
                     }
@@ -181,9 +362,9 @@ namespace LoadSheddingGAOptimization
             }
             else if(priority == 2)
             {
-                for (int i = 0; i < Chrome.Count; i++)
+                for (int i = 0; i < Chromos.Count; i++)
                 {
-                    if (Chrome[i].Priority == 1 || Chrome[i].Priority ==2)
+                    if (Chromos[i].Priority == 1 || Chromos[i].Priority ==2)
                     {
                         count++;
                     }
@@ -193,14 +374,14 @@ namespace LoadSheddingGAOptimization
                     }
                 }
             }
-            return Chrome.Count;
+            return Chromos.Count;
         }
 
         private bool CheckIfAllConsByPriorityOff(int priority)
         {
             for(int i=0; i< NumbOfConsByPriority(priority); i++)
             {
-                if (Chrome[i].Priority == priority && Chrome[i].On_Off == 0)
+                if (Chromos[i].Priority == priority && Chromos[i].On_Off == 0)
                 {
                     return false;
                 }
@@ -210,9 +391,9 @@ namespace LoadSheddingGAOptimization
 
         private int StartIndexInListOfPriority(int priority)
         {
-            for (int i = 0; i < Chrome.Count; i++)
+            for (int i = 0; i < Chromos.Count; i++)
             {
-                if (priority == Chrome[i].Priority)
+                if (priority == Chromos[i].Priority)
                 {
                     return i;
                 }
@@ -225,9 +406,9 @@ namespace LoadSheddingGAOptimization
             int count = 0;
             if (priority == 1)
             {
-                for (int i = 0; i < Chrome.Count; i++)
+                for (int i = 0; i < Chromos.Count; i++)
                 {
-                    if (Chrome[i].Priority == 1)
+                    if (Chromos[i].Priority == 1)
                     {
                         count++;
                     }
@@ -239,9 +420,9 @@ namespace LoadSheddingGAOptimization
             }
             else if (priority == 2)
             {
-                for (int i = 0; i < Chrome.Count; i++)
+                for (int i = 0; i < Chromos.Count; i++)
                 {
-                    if (Chrome[i].Priority == 1 || Chrome[i].Priority == 2)
+                    if (Chromos[i].Priority == 1 || Chromos[i].Priority == 2)
                     {
                         count++;
                     }
@@ -251,15 +432,20 @@ namespace LoadSheddingGAOptimization
                     }
                 }
             }
-            return Chrome.Count;
+            return Chromos.Count;
         }
 
         private void SetAllConsumersOffByPriority(int priority)
         {
             for (int i = 0; i < NumbOfConsByPriority(priority); i++)
             {
-                Chrome[i].On_Off = 1;
+                Chromos[i].On_Off = 1;
             }
+        }
+
+        public void IncrementAge()
+        {
+            Age =Age + 1;
         }
 
     }

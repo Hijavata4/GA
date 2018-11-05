@@ -1,0 +1,12 @@
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Release\LoadSheddingGAOptimization.exe.config
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Release\ConsumerXMLFile.xml
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Release\GenFileXML.xml
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Release\Consumer48XMLFile.xml
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Release\Gen18XMLFile1.xml
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Release\LoadSheddingGAOptimization.exe
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Release\LoadSheddingGAOptimization.pdb
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\obj\Release\LoadSheddingGAOptimization.Form1.resources
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\obj\Release\LoadSheddingGAOptimization.Properties.Resources.resources
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\obj\Release\LoadSheddingGAOptimization.csproj.GenerateResource.Cache
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\obj\Release\LoadSheddingGAOptimization.exe
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\obj\Release\LoadSheddingGAOptimization.pdb

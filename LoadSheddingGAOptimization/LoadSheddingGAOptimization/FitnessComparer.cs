@@ -8,7 +8,6 @@ namespace LoadSheddingGAOptimization
 {
     class FitnessComparer : IComparer<Chromosome>
     {
-        public float sheddLoad;
 
         public int Compare(Chromosome x, Chromosome y)
         {

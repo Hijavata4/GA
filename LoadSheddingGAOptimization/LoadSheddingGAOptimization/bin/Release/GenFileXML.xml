@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Generators>
+  <Generator Name="1" P="90" On="0"/>
+  <Generator Name="2" P="75" On="0"/>
+  <Generator Name="3" P="35" On="0"/>
+  <Generator Name="4" P="50" On="0"/>
+  <Generator Name="5" P="10" On="0"/>
+  <Generator Name="6" P="25" On="0"/>
+</Generators>

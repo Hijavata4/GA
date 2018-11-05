@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<LoadData>
+  <Consumer Priority="3" On-Off="0" Load="21.7" Name="1"/>
+  <Consumer Priority="1" On-Off="0" Load="2.4" Name="2"/>
+  <Consumer Priority="1" On-Off="0" Load="7.6" Name="3"/>
+  <Consumer Priority="2" On-Off="0" Load="94.2" Name="4"/>
+  <Consumer Priority="1" On-Off="0" Load="22.8" Name="5"/>
+  <Consumer Priority="2" On-Off="0" Load="30" Name="6"/>
+  <Consumer Priority="1" On-Off="0" Load="5.8" Name="7"/>
+  <Consumer Priority="1" On-Off="0" Load="11.2" Name="8"/>
+  <Consumer Priority="1" On-Off="0" Load="6.2" Name="9"/>
+  <Consumer Priority="2" On-Off="0" Load="8.2" Name="10"/>
+  <Consumer Priority="1" On-Off="0" Load="3.5" Name="11"/>
+  <Consumer Priority="2" On-Off="0" Load="9" Name="12"/>
+  <Consumer Priority="1" On-Off="0" Load="3.2" Name="13"/>
+  <Consumer Priority="1" On-Off="0" Load="9.5" Name="14"/>
+  <Consumer Priority="1" On-Off="0" Load="2.2" Name="15"/>
+  <Consumer Priority="1" On-Off="0" Load="17.5" Name="16"/>
+  <Consumer Priority="1" On-Off="0" Load="4.2" Name="17"/>
+  <Consumer Priority="2" On-Off="0" Load="8.7" Name="18"/>
+  <Consumer Priority="3" On-Off="0" Load="3.5" Name="19"/>
+  <Consumer Priority="2" On-Off="0" Load="3" Name="20"/>
+  <Consumer Priority="3" On-Off="0" Load="10.6" Name="21"/>
+</LoadData>

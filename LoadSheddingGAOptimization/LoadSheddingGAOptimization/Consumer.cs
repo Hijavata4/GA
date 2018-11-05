@@ -10,16 +10,16 @@ namespace LoadSheddingGAOptimization
     {
         public string Name;
         public int On_Off; // 0 - On , 1- Off
-        public float Load;
-        public int Priority; // za 1 - fitness 5, za 2 -3, za 1-1
+        public double Load;
+        public int Priority;
         public int Fitness { get; set; }
 
 
-        public Consumer(string xName, int xOn_Off, float xLoad, int priority)
+        public Consumer(string name, int on_off, double load, int priority)
         {
-            Name = xName;
-            On_Off = xOn_Off;
-            Load = xLoad;
+            Name = name;
+            On_Off = on_off;
+            Load = Math.Round(load,1);
             Priority = priority;
         }
 
@@ -38,7 +38,7 @@ namespace LoadSheddingGAOptimization
             }
         }
 
-        public void MutateGeneON()
+        public void MutateGeneClose()
         {
             if (Priority == 1)
             {
@@ -54,7 +54,7 @@ namespace LoadSheddingGAOptimization
             }
         }
 
-        public void MutateGeneOFF()
+        public void MutateGeneOpen()
         {
             On_Off = 0;
         }
