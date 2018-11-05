@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Generators>
+  <Generator Name="1" P="250" On="0"/>
+  <Generator Name="2" P="300" On="0"/>
+  <Generator Name="3" P="300" On="0"/>
+  <Generator Name="4" P="100" On="0"/>
+  <Generator Name="5" P="150" On="0"/>
+  <Generator Name="6" P="200" On="0"/>
+  <Generator Name="7" P="450" On="0"/>
+  <Generator Name="8" P="150" On="0"/>
+  <Generator Name="9" P="150" On="0"/>
+  <Generator Name="10" P="150" On="0"/>
+  <Generator Name="11" P="100" On="0"/>
+  <Generator Name="12" P="300" On="0"/>
+  <Generator Name="13" P="600" On="0"/>
+  <Generator Name="14" P="200" On="0"/>
+  <Generator Name="15" P="150" On="0"/>
+  <Generator Name="16" P="100" On="0"/>
+  <Generator Name="17" P="600" On="0"/>
+  <Generator Name="18" P="200" On="0"/>
+</Generators>

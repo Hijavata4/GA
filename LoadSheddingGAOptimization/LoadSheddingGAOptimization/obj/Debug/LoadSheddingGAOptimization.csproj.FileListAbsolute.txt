@@ -1,0 +1,26 @@
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\obj\Debug\LoadSheddingGAOptimization.Form1.resources
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\obj\Debug\LoadSheddingGAOptimization.Properties.Resources.resources
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\obj\Debug\LoadSheddingGAOptimization.csproj.GenerateResource.Cache
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Debug\LoadSheddingGAOptimization.exe.config
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Debug\LoadSheddingGAOptimization.exe
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Debug\LoadSheddingGAOptimization.pdb
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\obj\Debug\LoadSheddingGAOptimization.exe
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\obj\Debug\LoadSheddingGAOptimization.pdb
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Debug\ConsumerXMLFile.xml
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Debug\GenFileXML.xml
+E:\Faks\MASTER\Master Rad\Program\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Debug\LoadSheddingGAOptimization.exe.config
+E:\Faks\MASTER\Master Rad\Program\LoadSheddingGAOptimization\LoadSheddingGAOptimization\obj\Debug\LoadSheddingGAOptimization.exe
+E:\Faks\MASTER\Master Rad\Program\LoadSheddingGAOptimization\LoadSheddingGAOptimization\obj\Debug\LoadSheddingGAOptimization.pdb
+E:\Faks\MASTER\Master Rad\Program\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Debug\ConsumerXMLFile.xml
+E:\Faks\MASTER\Master Rad\Program\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Debug\GenFileXML.xml
+E:\Faks\MASTER\Master Rad\Program\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Debug\LoadSheddingGAOptimization.exe
+E:\Faks\MASTER\Master Rad\Program\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Debug\LoadSheddingGAOptimization.pdb
+E:\Faks\MASTER\Master Rad\Program\LoadSheddingGAOptimization\LoadSheddingGAOptimization\obj\Debug\LoadSheddingGAOptimization.csprojResolveAssemblyReference.cache
+E:\Faks\MASTER\Master Rad\Program\LoadSheddingGAOptimization\LoadSheddingGAOptimization\obj\Debug\LoadSheddingGAOptimization.Form1.resources
+E:\Faks\MASTER\Master Rad\Program\LoadSheddingGAOptimization\LoadSheddingGAOptimization\obj\Debug\LoadSheddingGAOptimization.Properties.Resources.resources
+E:\Faks\MASTER\Master Rad\Program\LoadSheddingGAOptimization\LoadSheddingGAOptimization\obj\Debug\LoadSheddingGAOptimization.csproj.GenerateResource.Cache
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Debug\Consumer48XMLFile.xml
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Debug\Gen18XMLFile1.xml
+D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\obj\Debug\LoadSheddingGAOptimization.csprojResolveAssemblyReference.cache
+E:\Faks\MASTER\Master Rad\Program\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Debug\Consumer48XMLFile.xml
+E:\Faks\MASTER\Master Rad\Program\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Debug\Gen18XMLFile1.xml
