@@ -29,7 +29,6 @@ namespace LoadSheddingGAOptimization
         private Random random = new Random();
 
         private List<Chromosome> Population = new List<Chromosome>();
-        private List<Chromosome> XCV = new List<Chromosome>();
         private Chromosome newChromosome1;
         private Chromosome newChromosome2;
         private Chromosome Child1;
@@ -103,8 +102,6 @@ namespace LoadSheddingGAOptimization
                 Population.Add(Child1);
                 Population.Add(Child2);
 
-                //Population.Sort(comp);
-
                 for (int i = 0; i < Population.Count; i++)
                 {
                     if (Population[i].fitness < bestFit.fitness)
@@ -120,17 +117,6 @@ namespace LoadSheddingGAOptimization
                     Population[i].IncrementAge();
                 }
 
-                //if(Population[0].fitness < bestFit.fitness)
-                //{
-                //    BestFitChangeRate = 0;
-                //    bestFit = Population[0];
-                //    BestFitAtGeneneration = Generation;
-                //    BestFitTime = DateTime.Now;
-                //    Invoke(new EventHandler(UpdateUIBestFitLabels));
-                //    Invoke(new EventHandler(UpdateUIConsumerList));
-                //}
-
-                //SurvivorSelectionFitnessBased(Population);
                 StopGa = StopGAoptimization();
                 Invoke(new EventHandler(UpdateUIGenLabel));
                 Invoke(new EventHandler(UpdateUIChart));
@@ -142,8 +128,6 @@ namespace LoadSheddingGAOptimization
             }
             EndTime = DateTime.Now;
             Invoke(new EventHandler(UpdateUIEndTimeLabel));
-            //Invoke(new EventHandler(UpdateUIBestFitLabels));
-            //Thread.Sleep(10000);
         }
 
         private bool StopGAoptimization()
