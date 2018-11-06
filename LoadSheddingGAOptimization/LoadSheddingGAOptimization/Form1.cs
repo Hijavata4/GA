@@ -94,56 +94,38 @@ namespace LoadSheddingGAOptimization
 
             while (StopGa == false)
             {
-                UniformCrossover2(ParentSelectionTS(Population), ParentSelectionTS(Population), sheddLoad);//UniformCrossover1(bestFit, Population[random.Next(Population.Count)], sheddLoad);
+                UniformCrossover2(ParentSelectionTS(Population), ParentSelectionTS(Population), sheddLoad);
 
                 Population.Add(Child1);
                 Population.Add(Child2);
 
-                UniformCrossover2(ParentSelectionTS(Population), ParentSelectionTS(Population), sheddLoad);//UniformCrossover2(bestFit, Population[random.Next(Population.Count)], sheddLoad);
+                UniformCrossover2(ParentSelectionTS(Population), ParentSelectionTS(Population), sheddLoad);
                 Population.Add(Child1);
                 Population.Add(Child2);
 
-                //Population.Sort(comp);
+                Population.Sort(comp);
 
-                for (int i = 0; i < Population.Count; i++)
+                if (Population[0].fitness < bestFit.fitness)
                 {
-                    if (Population[i].fitness < bestFit.fitness)
-                    {
-                        BestFitChangeRate = 0;
-                        bestFit.Chromos = Population[i].Chromos;
-                        bestFit.SetFitness(sheddLoad);
-                        BestFitAtGeneneration = Generation;
-                        BestFitTime = DateTime.Now;
-                        Invoke(new EventHandler(UpdateUIBestFitLabels));
-                        Invoke(new EventHandler(UpdateUIConsumerList));
-                    }
-                    Population[i].IncrementAge();
+                    BestFitChangeRate = 0;
+                    bestFit = Population[0];
+                    BestFitAtGeneneration = Generation;
+                    BestFitTime = DateTime.Now;
+                    Invoke(new EventHandler(UpdateUIBestFitLabels));
+                    Invoke(new EventHandler(UpdateUIConsumerList));
                 }
 
-                //if(Population[0].fitness < bestFit.fitness)
-                //{
-                //    BestFitChangeRate = 0;
-                //    bestFit = Population[0];
-                //    BestFitAtGeneneration = Generation;
-                //    BestFitTime = DateTime.Now;
-                //    Invoke(new EventHandler(UpdateUIBestFitLabels));
-                //    Invoke(new EventHandler(UpdateUIConsumerList));
-                //}
-
-                //SurvivorSelectionFitnessBased(Population);
                 StopGa = StopGAoptimization();
                 Invoke(new EventHandler(UpdateUIGenLabel));
                 Invoke(new EventHandler(UpdateUIChart));
                 Generation++;
                 BestFitChangeRate++;
 
-                SurvivorSelectionAgeBased(Population);
-                             
+                SurvivorSelectionFitnessBased(Population);
+
             }
             EndTime = DateTime.Now;
             Invoke(new EventHandler(UpdateUIEndTimeLabel));
-            //Invoke(new EventHandler(UpdateUIBestFitLabels));
-            //Thread.Sleep(10000);
         }
 
         private bool StopGAoptimization()
