@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.btnXMLloader = new System.Windows.Forms.Button();
             this.btnShowList = new System.Windows.Forms.Button();
             this.listViewCons = new System.Windows.Forms.ListView();
@@ -85,12 +85,15 @@
             this.btnLoadXMLL = new System.Windows.Forms.Button();
             this.lbBestFitGen = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.lbStartTime = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.lbBestFitTime = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
+            this.btnReset = new System.Windows.Forms.Button();
             this.lbEndTime = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.lbBestFitTime = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.lbStartTime = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.panel2.SuspendLayout();
@@ -211,7 +214,7 @@
             this.panel1.Controls.Add(this.btnGen3);
             this.panel1.Controls.Add(this.btnGen2);
             this.panel1.Controls.Add(this.btnGen1);
-            this.panel1.Location = new System.Drawing.Point(330, 12);
+            this.panel1.Location = new System.Drawing.Point(337, 11);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(218, 74);
             this.panel1.TabIndex = 7;
@@ -295,9 +298,9 @@
             // 
             // btnLoadShedding
             // 
-            this.btnLoadShedding.Location = new System.Drawing.Point(142, 32);
+            this.btnLoadShedding.Location = new System.Drawing.Point(122, 42);
             this.btnLoadShedding.Name = "btnLoadShedding";
-            this.btnLoadShedding.Size = new System.Drawing.Size(101, 45);
+            this.btnLoadShedding.Size = new System.Drawing.Size(82, 40);
             this.btnLoadShedding.TabIndex = 8;
             this.btnLoadShedding.Text = "Load Shedding";
             this.btnLoadShedding.UseVisualStyleBackColor = true;
@@ -360,24 +363,24 @@
             // chart1
             // 
             this.chart1.BorderlineWidth = 3;
-            chartArea1.AxisX.Title = "Generation";
-            chartArea1.AxisY.Title = "BestFit";
-            chartArea1.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea1);
-            legend1.Enabled = false;
-            legend1.Name = "Legend1";
-            this.chart1.Legends.Add(legend1);
+            chartArea4.AxisX.Title = "Generation";
+            chartArea4.AxisY.Title = "BestFit";
+            chartArea4.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea4);
+            legend4.Enabled = false;
+            legend4.Name = "Legend1";
+            this.chart1.Legends.Add(legend4);
             this.chart1.Location = new System.Drawing.Point(549, 109);
             this.chart1.Name = "chart1";
             this.chart1.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.SeaGreen;
             this.chart1.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            series1.BorderColor = System.Drawing.Color.White;
-            series1.BorderWidth = 3;
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.Legend = "Legend1";
-            series1.Name = "BestFit";
-            this.chart1.Series.Add(series1);
+            series4.BorderColor = System.Drawing.Color.White;
+            series4.BorderWidth = 3;
+            series4.ChartArea = "ChartArea1";
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series4.Legend = "Legend1";
+            series4.Name = "BestFit";
+            this.chart1.Series.Add(series4);
             this.chart1.Size = new System.Drawing.Size(362, 268);
             this.chart1.TabIndex = 15;
             this.chart1.Text = "chart1";
@@ -423,7 +426,7 @@
             this.panel2.Controls.Add(this.btnGenX2);
             this.panel2.Controls.Add(this.btnGenX1);
             this.panel2.Controls.Add(this.label7);
-            this.panel2.Location = new System.Drawing.Point(293, -1);
+            this.panel2.Location = new System.Drawing.Point(279, -2);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(289, 87);
             this.panel2.TabIndex = 18;
@@ -631,7 +634,7 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(90, 9);
+            this.label7.Location = new System.Drawing.Point(83, 13);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(107, 14);
             this.label7.TabIndex = 7;
@@ -665,59 +668,87 @@
             this.label9.TabIndex = 20;
             this.label9.Text = "BestFit Gen:";
             // 
-            // label8
+            // btnReset
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(743, 36);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(54, 13);
-            this.label8.TabIndex = 23;
-            this.label8.Text = "Start time:";
-            // 
-            // lbStartTime
-            // 
-            this.lbStartTime.AutoSize = true;
-            this.lbStartTime.Location = new System.Drawing.Point(817, 36);
-            this.lbStartTime.Name = "lbStartTime";
-            this.lbStartTime.Size = new System.Drawing.Size(13, 13);
-            this.lbStartTime.TabIndex = 22;
-            this.lbStartTime.Text = "0";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(743, 53);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(68, 13);
-            this.label11.TabIndex = 25;
-            this.label11.Text = "BestFit Time:";
-            // 
-            // lbBestFitTime
-            // 
-            this.lbBestFitTime.AutoSize = true;
-            this.lbBestFitTime.Location = new System.Drawing.Point(817, 53);
-            this.lbBestFitTime.Name = "lbBestFitTime";
-            this.lbBestFitTime.Size = new System.Drawing.Size(13, 13);
-            this.lbBestFitTime.TabIndex = 24;
-            this.lbBestFitTime.Text = "0";
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(743, 70);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(51, 13);
-            this.label13.TabIndex = 27;
-            this.label13.Text = "End time:";
+            this.btnReset.Location = new System.Drawing.Point(122, 8);
+            this.btnReset.Name = "btnReset";
+            this.btnReset.Size = new System.Drawing.Size(82, 29);
+            this.btnReset.TabIndex = 22;
+            this.btnReset.Text = "Reset";
+            this.btnReset.UseVisualStyleBackColor = true;
+            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
             // 
             // lbEndTime
             // 
             this.lbEndTime.AutoSize = true;
-            this.lbEndTime.Location = new System.Drawing.Point(817, 70);
+            this.lbEndTime.Location = new System.Drawing.Point(814, 70);
             this.lbEndTime.Name = "lbEndTime";
             this.lbEndTime.Size = new System.Drawing.Size(13, 13);
-            this.lbEndTime.TabIndex = 26;
+            this.lbEndTime.TabIndex = 28;
             this.lbEndTime.Text = "0";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(743, 70);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(51, 13);
+            this.label10.TabIndex = 27;
+            this.label10.Text = "End time:";
+            // 
+            // lbBestFitTime
+            // 
+            this.lbBestFitTime.AutoSize = true;
+            this.lbBestFitTime.Location = new System.Drawing.Point(814, 53);
+            this.lbBestFitTime.Name = "lbBestFitTime";
+            this.lbBestFitTime.Size = new System.Drawing.Size(13, 13);
+            this.lbBestFitTime.TabIndex = 26;
+            this.lbBestFitTime.Text = "0";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(743, 53);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(64, 13);
+            this.label12.TabIndex = 25;
+            this.label12.Text = "BestFit time:";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(743, 36);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(54, 13);
+            this.label13.TabIndex = 24;
+            this.label13.Text = "Start time:";
+            // 
+            // lbStartTime
+            // 
+            this.lbStartTime.AutoSize = true;
+            this.lbStartTime.Location = new System.Drawing.Point(814, 36);
+            this.lbStartTime.Name = "lbStartTime";
+            this.lbStartTime.Size = new System.Drawing.Size(13, 13);
+            this.lbStartTime.TabIndex = 23;
+            this.lbStartTime.Text = "0";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(762, 7);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(45, 20);
+            this.textBox1.TabIndex = 29;
+            this.textBox1.Text = "150";
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(635, 11);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(121, 13);
+            this.label8.TabIndex = 30;
+            this.label8.Text = "Set number of iterations:";
             // 
             // Form1
             // 
@@ -725,12 +756,15 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(920, 389);
-            this.Controls.Add(this.label13);
-            this.Controls.Add(this.lbEndTime);
-            this.Controls.Add(this.label11);
-            this.Controls.Add(this.lbBestFitTime);
             this.Controls.Add(this.label8);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.lbEndTime);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.lbBestFitTime);
+            this.Controls.Add(this.label12);
+            this.Controls.Add(this.label13);
             this.Controls.Add(this.lbStartTime);
+            this.Controls.Add(this.btnReset);
             this.Controls.Add(this.lbBestFitGen);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.btnLoadXMLL);
@@ -821,12 +855,15 @@
         private System.Windows.Forms.Button btnLoadXMLL;
         private System.Windows.Forms.Label lbBestFitGen;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label lbStartTime;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label lbBestFitTime;
-        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Button btnReset;
         private System.Windows.Forms.Label lbEndTime;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label lbBestFitTime;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label lbStartTime;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label8;
     }
 }
 

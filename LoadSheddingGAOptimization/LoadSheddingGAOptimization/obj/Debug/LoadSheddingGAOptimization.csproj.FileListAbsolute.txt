@@ -22,5 +22,3 @@ E:\Faks\MASTER\Master Rad\Program\LoadSheddingGAOptimization\LoadSheddingGAOptim
 D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Debug\Consumer48XMLFile.xml
 D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Debug\Gen18XMLFile1.xml
 D:\users\zoltan.berec\documents\visual studio 2015\Projects\LoadSheddingGAOptimization\LoadSheddingGAOptimization\obj\Debug\LoadSheddingGAOptimization.csprojResolveAssemblyReference.cache
-E:\Faks\MASTER\Master Rad\Program\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Debug\Consumer48XMLFile.xml
-E:\Faks\MASTER\Master Rad\Program\LoadSheddingGAOptimization\LoadSheddingGAOptimization\bin\Debug\Gen18XMLFile1.xml
