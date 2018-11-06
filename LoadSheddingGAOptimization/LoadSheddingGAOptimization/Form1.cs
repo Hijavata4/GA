@@ -93,12 +93,12 @@ namespace LoadSheddingGAOptimization
 
             while (StopGa == false)
             {
-                UniformCrossover2(ParentSelectionTS(Population), ParentSelectionTS(Population), sheddLoad);//UniformCrossover1(bestFit, Population[random.Next(Population.Count)], sheddLoad);
+                UniformCrossover2(ParentSelectionTS(Population), ParentSelectionTS(Population), sheddLoad);
 
                 Population.Add(Child1);
                 Population.Add(Child2);
 
-                UniformCrossover2(ParentSelectionTS(Population), ParentSelectionTS(Population), sheddLoad);//UniformCrossover2(bestFit, Population[random.Next(Population.Count)], sheddLoad);
+                UniformCrossover2(ParentSelectionTS(Population), ParentSelectionTS(Population), sheddLoad);
                 Population.Add(Child1);
                 Population.Add(Child2);
 
