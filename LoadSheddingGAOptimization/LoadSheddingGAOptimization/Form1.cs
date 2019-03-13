@@ -26,14 +26,15 @@ namespace LoadSheddingGAOptimization
         private int BestFitAtGeneneration = 0;
         private int BestFitChangeRate = 0;
         private int NumberOfIterations = 150;
+        private double AverageFitness;
         private Random random = new Random();
 
         private List<Chromosome> Population = new List<Chromosome>();
-        private Chromosome newChromosome1;
-        private Chromosome newChromosome2;
+        private Chromosome parent1;
+        private Chromosome parent2;
         private Chromosome Child1;
         private Chromosome Child2;
-        private Chromosome bestFit =null;
+        private Chromosome bestFit;
 
         private DateTime StartTime = new DateTime();
         private DateTime BestFitTime = new DateTime();
@@ -54,9 +55,31 @@ namespace LoadSheddingGAOptimization
             return Math.Round(sum,1);
         }
 
+        private void CreateInitPopulation(int populNumber, List<Consumer> lstCons, double sheddLoad)
+        {
+            for (int i=0; i<populNumber; i++)
+            {
+                Population.Add(new Chromosome(lstCons, sheddLoad, true));
+                Thread.Sleep(10);
+            }
+        }
+
+        private void CalculateAverageFitness()
+        {
+            AverageFitness = 0;
+            double SumOfFitn = 0;
+
+            for(int i=0; i < Population.Count; i++)
+            {
+                SumOfFitn = SumOfFitn + Population[i].fitness;
+            }
+            AverageFitness = SumOfFitn / Population.Count;
+        }
+            
         void GeneticAlgorithm(List<Consumer> lstCons, double sheddLoad)
         {
-            bestFit = null;
+            bestFit = new Chromosome(lstCons, sheddLoad, false);
+            bestFit.SetFitness(sheddLoad);
             StartTime = DateTime.Now;
             Invoke(new EventHandler(UpdateUIStartTimeLabel)); 
             StopGa = false;
@@ -64,70 +87,68 @@ namespace LoadSheddingGAOptimization
             Generation = 1;
             BestFitChangeRate = 0;
 
-            newChromosome1 = new Chromosome(lstCons, sheddLoad, true);
-            newChromosome2 = new Chromosome(lstCons, sheddLoad, true);
-
-            Population.Add(newChromosome1);
-            Population.Add(newChromosome2);
-
-            newChromosome1 = null;
-            newChromosome2 = null;
-
-            newChromosome1 = new Chromosome(lstCons, sheddLoad, true);
-            newChromosome2 = new Chromosome(lstCons, sheddLoad, true);
-
-            Population.Add(newChromosome1);
-            Population.Add(newChromosome2);
-
-            newChromosome1 = null;
-            newChromosome2 = null;
+            CreateInitPopulation(16, lstCons, sheddLoad);
 
             FitnessComparer comp = new FitnessComparer();
             Population.Sort(comp);
 
-            bestFit = Population[0];
+            FindBestFitInPopulation();
             BestFitTime = DateTime.Now;
             Invoke(new EventHandler(UpdateUIGenLabel));
-            Invoke(new EventHandler(UpdateUIBestFitLabels));
+         //   Invoke(new EventHandler(UpdateUIBestFitLabels));
             Invoke(new EventHandler(UpdateUIChart));
 
             while (StopGa == false)
             {
-                UniformCrossover2(ParentSelectionTS(Population), ParentSelectionTS(Population), sheddLoad);
+                ParentSelectionTS(Population);
+                UniformCrossover2(parent1, parent2, sheddLoad);
 
                 Population.Add(Child1);
                 Population.Add(Child2);
 
-                UniformCrossover2(ParentSelectionTS(Population), ParentSelectionTS(Population), sheddLoad);
+                ParentSelectionTS(Population);
+                UniformCrossover2(parent1, parent2, sheddLoad);
+
                 Population.Add(Child1);
                 Population.Add(Child2);
 
-                for (int i = 0; i < Population.Count; i++)
-                {
-                    if (Population[i].fitness < bestFit.fitness)
-                    {
-                        BestFitChangeRate = 0;
-                        bestFit.Chromos = Population[i].Chromos;
-                        bestFit.SetFitness(sheddLoad);
-                        BestFitAtGeneneration = Generation;
-                        BestFitTime = DateTime.Now;
-                        Invoke(new EventHandler(UpdateUIBestFitLabels));
-                        Invoke(new EventHandler(UpdateUIConsumerList));
-                    }
-                    Population[i].IncrementAge();
-                }
+                Population.Sort(comp);
+                FindBestFitInPopulation();
 
-                StopGa = StopGAoptimization();
+                CalculateAverageFitness();
+
+                Generation++;
                 Invoke(new EventHandler(UpdateUIGenLabel));
                 Invoke(new EventHandler(UpdateUIChart));
-                Generation++;
-                BestFitChangeRate++;
+                //BestFitChangeRate++;
 
-                SurvivorSelectionAgeBased(Population);
-                             
+                SurvivorSelectionFitnessBased(Population);//SurvivorSelectionAgeBased(Population);
+
+                StopGa = StopGAoptimization();
             }
             EndTime = DateTime.Now;
             Invoke(new EventHandler(UpdateUIEndTimeLabel));
+        }
+
+        void FindBestFitInPopulation()
+        {
+            for (int i = 0; i < Population.Count; i++)
+            {
+                if ((Population[i].fitness < bestFit.fitness) & Population[i].positiveFit)
+                {
+                    // BestFitChangeRate = 0;
+                    for (int k=0; k<Population[i].Chromos.Count;k++ )
+                    {
+                        bestFit.Chromos[k].On_Off = Population[i].Chromos[k].On_Off;
+                    }
+                    bestFit.fitness = Population[i].fitness;
+                    BestFitAtGeneneration = Generation;
+                    BestFitTime = DateTime.Now;
+                    Invoke(new EventHandler(UpdateUIBestFitLabels));
+                    Invoke(new EventHandler(UpdateUIConsumerList));
+                    break;
+                }
+            }        
         }
 
         private bool StopGAoptimization()
@@ -146,74 +167,74 @@ namespace LoadSheddingGAOptimization
             }
         }
 
-        private void UniformCrossover1(Chromosome Chromos1, Chromosome Chromos2, double sheddLoad)
+        private void UniformCrossover1(Chromosome xParent1, Chromosome xParent2, double sheddLoad)
         {
             Child1 = null;
             Child2 = null;
 
-            Child1 = new Chromosome(Chromos1.Chromos, sheddLoad, false);
-            Child2 = new Chromosome(Chromos2.Chromos, sheddLoad, false);
-            for (int i = 0; i < Chromos1.Chromos.Count; i++)
+            Child1 = new Chromosome(xParent1.Chromos, sheddLoad, false);
+            Child2 = new Chromosome(xParent2.Chromos, sheddLoad, false);
+            for (int i = 0; i < xParent1.Chromos.Count; i++)
             {
                 if (i % 3 == 0)
                 {
-                    if (Chromos1.Chromos[i].On_Off != Chromos2.Chromos[i].On_Off)
+                    if (xParent1.Chromos[i].On_Off != xParent2.Chromos[i].On_Off)
                     {
-                        Child1.Chromos[i].On_Off = Chromos2.Chromos[i].On_Off;
+                        Child1.Chromos[i].On_Off = xParent2.Chromos[i].On_Off;
                     }
                 }  
             }
 
-            for (int k = 0; k < Chromos1.Chromos.Count ; k++)
+            for (int k = 0; k < xParent1.Chromos.Count ; k++)
             {
                 if (k % 3 != 0)
                 {
-                    if (Chromos1.Chromos[k].On_Off != Chromos2.Chromos[k].On_Off)
+                    if (xParent1.Chromos[k].On_Off != xParent2.Chromos[k].On_Off)
                     {
-                        Child2.Chromos[k].On_Off = Chromos1.Chromos[k].On_Off;
+                        Child2.Chromos[k].On_Off = xParent1.Chromos[k].On_Off;
                     }
                 }
             }
 
-            if(random.Next(0,100)< 25)
+            if(random.Next(0,100)< 10)
             {
                 Child1.Mutate(sheddLoad);
             }
-            if (random.Next(0, 100) < 25)
+            if (random.Next(0, 100) < 10)
             {
-                Child2.Mutate(sheddLoad);
+              Child2.Mutate(sheddLoad);
             }
             
             Child1.SetFitness(sheddLoad);
             Child2.SetFitness(sheddLoad);
         }
 
-        private void UniformCrossover2(Chromosome Chromos1, Chromosome Chromos2,double sheddLoad)
+        private void UniformCrossover2(Chromosome xParent1, Chromosome xParent2,double sheddLoad)
         {
             Child1 = null;
             Child2 = null;
-            Child1 = new Chromosome(Chromos1.Chromos, sheddLoad, false);
-            Child2 = new Chromosome(Chromos2.Chromos, sheddLoad, false);
+            Child1 = new Chromosome(xParent1.Chromos, sheddLoad, false);
+            Child2 = new Chromosome(xParent2.Chromos, sheddLoad, false);
 
-            for (int i = 0; i < Chromos1.Chromos.Count; i+=2)
+            for (int i = 0; i < xParent1.Chromos.Count; i+=2)
             {
-                if (Chromos1.Chromos[i].On_Off != Chromos2.Chromos[i].On_Off)
+                if (xParent1.Chromos[i].On_Off != xParent2.Chromos[i].On_Off)
                 {
-                    Child1.Chromos[i].On_Off = Chromos2.Chromos[i].On_Off;
+                    Child1.Chromos[i].On_Off = xParent2.Chromos[i].On_Off;
                 }
             }
-            for (int k =1; k < Chromos1.Chromos.Count ; k+=2)
+            for (int k =1; k < xParent1.Chromos.Count ; k+=2)
             {
-                if (Chromos1.Chromos[k].On_Off != Chromos2.Chromos[k].On_Off)
+                if (xParent1.Chromos[k].On_Off != xParent2.Chromos[k].On_Off)
                 {
-                    Child2.Chromos[k].On_Off = Chromos1.Chromos[k].On_Off;
+                    Child2.Chromos[k].On_Off = xParent1.Chromos[k].On_Off;
                 }
             }
-            if (random.Next(0, 100) < 25)
+            if (random.Next(0, 100) < 10)
             {
                 Child1.Mutate(sheddLoad);
             }
-            if (random.Next(0, 100) < 25)
+            if (random.Next(0, 100) < 10)
             {
                 Child2.Mutate(sheddLoad);
             }
@@ -222,15 +243,28 @@ namespace LoadSheddingGAOptimization
             Child2.SetFitness(sheddLoad);
         }
 
-        private Chromosome ParentSelectionTS(List<Chromosome> population)
+        private void ParentSelectionTS(List<Chromosome> population)
         {
-            List<Chromosome> parentSelList = new List<Chromosome>(); 
+            parent1 = null;
+            parent2 = null;
+            int number = 0;
+            List<int> indexList = new List<int>();
+            List<Chromosome> parentSelList = new List<Chromosome>();
 
-            parentSelList.Add(population[random.Next(0, population.Count)]);
-            parentSelList.Add(population[random.Next(0, population.Count)]);
-            parentSelList.Add(population[random.Next(0, population.Count)]);
+            for (int i=0; i<6; i++)
+            {
+                do
+                {
+                    number = random.Next(0, population.Count);
+                } while (indexList.Contains(number));
+                indexList.Add(number);
+                parentSelList.Add(population[number]);
+            }
+            FitnessComparer comp = new FitnessComparer();
+            parentSelList.Sort(comp);
 
-            return GetBestFitFromList(parentSelList);
+            parent1 = parentSelList[0];
+            parent2 = parentSelList[1];
         }
 
         private Chromosome GetBestFitFromList(List<Chromosome> parentSelList)
@@ -254,10 +288,7 @@ namespace LoadSheddingGAOptimization
 
         private void SurvivorSelectionFitnessBased(List<Chromosome> population)
         {
-            if(population.Count == 32)
-            {
-                population.RemoveRange(16, 16);
-            }
+           population.RemoveRange(16, 4);       
         }
 
         void InitializeGens(string xState, string name)
@@ -586,6 +617,10 @@ namespace LoadSheddingGAOptimization
         private void UpdateUIChart(object sender, EventArgs e)
         {
             chart1.Series["BestFit"].Points.AddXY(Generation,bestFit.fitness);
+            chart1.Series["AverageFitness"].Points.AddXY(Generation, AverageFitness);
+            chart1.Series["BestFit"].LegendText = "Bestfit";
+            chart1.Series["AverageFitness"].LegendText = "Average Fitness";
+
         }
 
         private void UpdateUIEndTimeLabel(object sender, EventArgs e)
@@ -1245,6 +1280,7 @@ namespace LoadSheddingGAOptimization
             ResetAllLabels(sender, e);
 
             chart1.Series["BestFit"].Points.Clear();
+            chart1.Series["AverageFitness"].Points.Clear();
             panel1.Visible = false;
             panel2.Visible = false;
             IsViewListsFilled = false;

@@ -8,49 +8,75 @@ namespace LoadSheddingGAOptimization
 {
     class Chromosome
     {
-        public List<Consumer> Chromos;
+        public List<Consumer> Chromos = new List<Consumer>();
+        public Boolean positiveFit;
         public double fitness;
         public int Age;
 
-        public Chromosome(List<Consumer> chromos, double loadToBeShedd, bool Init)
+        public Chromosome(List<Consumer> lstOfCons, double loadToBeShedd, bool Init)
         {
             if (Init)
             {
-                Chromos = InitializeChromossome(chromos, loadToBeShedd);
-                fitness = ClalculateFitness(loadToBeShedd);
+                InitializeChromos(lstOfCons, loadToBeShedd);
+                int priority = CheckWhatPriorityShouldBeShedd(loadToBeShedd);
+                SetAllConsumersOffByPriority( priority-1);
+                SetRandomState(priority);
+                SetFitness(loadToBeShedd);
                 Age = 0;
             }
             else
             {
-                Chromos = chromos;
+                InitializeChromos(lstOfCons, loadToBeShedd);
                 Age = 0;
             }
         }
 
-        private List<Consumer> InitializeChromossome(List<Consumer> lst, double loadToBeShedd)
+        private void InitializeChromos(List<Consumer> lst, double loadToBeShedd)
         {
-            Chromos = lst;
-            for (int i = 0; i < NumbOfConsByPriority(InitializeOrMutateByPriority(loadToBeShedd)); i++)
+            Consumer cons;
+            for (int i = 0; i < lst.Count; i++)
             {
-                lst[i].radnomOnOF();
+                cons = new Consumer(lst[i].Name, lst[i].On_Off, lst[i].Load, lst[i].Priority);
+                Chromos.Add(cons);
             }
-            return lst;
         }
 
-        private double ClalculateFitness(double loadToBeShedd)
-        {
-            return Convert.ToInt32(Math.Abs(GetSumOfSheddLoad() - loadToBeShedd));
+        private double ClalculateDifOFSheddConsAndNeededLoad(double loadToBeShedd)
+        {      
+            return GetSumOfSheddLoad() - loadToBeShedd;
         }
 
         public void SetFitness(double loadToBeShedd)
         {
+            double diference;
+            diference = ClalculateDifOFSheddConsAndNeededLoad(loadToBeShedd);
+            positiveFit = (diference >= 0);
             fitness = Math.Round(Math.Abs(GetSumOfSheddLoad() - loadToBeShedd), 1);
         }        
+
+        private void SetRandomState(int priority)
+        {
+            int indStart, indEnd;
+            Random x = new Random();
+            indStart = StartIndexInListOfPriority(priority);
+            indEnd = EndIndexInListOfPriority(priority);
+            for ( int i =indStart; i< indEnd; i++)
+            {       
+                if (x.Next(100) < 50)
+                {
+                    Chromos[i].On_Off = 1;
+                }
+                else
+                {
+                    Chromos[i].On_Off = 0;
+                }
+            }
+        }
 
         public void Mutate(double loadToBeShedd)
         {
             int priority = 0;
-            priority = InitializeOrMutateByPriority(loadToBeShedd);
+            priority = CheckWhatPriorityShouldBeShedd(loadToBeShedd);
             if (priority == 1)
             {
                 if (GetSumOfSheddLoad() < loadToBeShedd)
@@ -61,7 +87,7 @@ namespace LoadSheddingGAOptimization
                     for (int i = 0; i < 3; i++)
                     {
                         c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));        //Next(InitializeOrMutateByPriority(loadToBeShedd));
-                        Chromos[c].MutateGeneClose();
+                        Chromos[c].SetStatusOnOff(1);
                     }
                     while (GetSumOfSheddLoad() < loadToBeShedd)
                     {
@@ -72,7 +98,7 @@ namespace LoadSheddingGAOptimization
                             {
                                 if (Chromos[i].On_Off == 0)
                                 {
-                                    Chromos[i].MutateGeneClose();
+                                    Chromos[i].SetStatusOnOff(1);
                                     break;
                                 }
 
@@ -85,7 +111,7 @@ namespace LoadSheddingGAOptimization
                             {
                                 if (Chromos[i].On_Off == 0)
                                 {
-                                    Chromos[i].MutateGeneClose();
+                                    Chromos[i].SetStatusOnOff(1);
                                     break;
                                 }
                             }
@@ -101,7 +127,7 @@ namespace LoadSheddingGAOptimization
                     for (int i = 0; i < 3; i++)
                     {
                         c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));
-                        Chromos[c].MutateGeneOpen();
+                        Chromos[c].SetStatusOnOff(0);
                     }
                     while (GetSumOfSheddLoad() < loadToBeShedd)
                     {
@@ -112,7 +138,7 @@ namespace LoadSheddingGAOptimization
                             {
                                 if (Chromos[i].On_Off == 0)
                                 {
-                                    Chromos[i].MutateGeneClose();
+                                    Chromos[i].SetStatusOnOff(1);
                                     break;
                                 }
                             }
@@ -124,7 +150,7 @@ namespace LoadSheddingGAOptimization
                             {
                                 if (Chromos[i].On_Off == 0)
                                 {
-                                    Chromos[i].MutateGeneClose();
+                                    Chromos[i].SetStatusOnOff(1);
                                     break;
                                 }
 
@@ -146,7 +172,7 @@ namespace LoadSheddingGAOptimization
                     for (int i = 0; i < 3; i++)
                     {
                         c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));        //Next(InitializeOrMutateByPriority(loadToBeShedd));
-                        Chromos[c].MutateGeneClose();
+                        Chromos[c].SetStatusOnOff(1);
                     }
                     while (GetSumOfSheddLoad() < loadToBeShedd)
                     {
@@ -157,7 +183,7 @@ namespace LoadSheddingGAOptimization
                             {
                                 if (Chromos[i].On_Off == 0)
                                 {
-                                    Chromos[i].MutateGeneClose();
+                                    Chromos[i].SetStatusOnOff(1);
                                     break;
                                 }
                             }
@@ -169,7 +195,7 @@ namespace LoadSheddingGAOptimization
                             {
                                 if (Chromos[i].On_Off == 0)
                                 {
-                                    Chromos[i].MutateGeneClose();
+                                    Chromos[i].SetStatusOnOff(1);
                                     break;
                                 }
                             }
@@ -185,7 +211,7 @@ namespace LoadSheddingGAOptimization
                     for (int i = 0; i < 3; i++)
                     {
                         c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));
-                        Chromos[c].MutateGeneOpen();
+                        Chromos[c].SetStatusOnOff(0);
                     }
                     while (GetSumOfSheddLoad() < loadToBeShedd)
                     {
@@ -196,7 +222,7 @@ namespace LoadSheddingGAOptimization
                             {
                                 if (Chromos[i].On_Off == 0)
                                 {
-                                    Chromos[i].MutateGeneClose();
+                                    Chromos[i].SetStatusOnOff(1);
                                     break;
                                 }
                             }
@@ -208,7 +234,7 @@ namespace LoadSheddingGAOptimization
                             {
                                 if (Chromos[i].On_Off == 0)
                                 {
-                                    Chromos[i].MutateGeneClose();
+                                    Chromos[i].SetStatusOnOff(1);
                                     break;
                                 }
                             }
@@ -228,7 +254,7 @@ namespace LoadSheddingGAOptimization
                     for (int i = 0; i < 3; i++)
                     {
                         c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));        //Next(InitializeOrMutateByPriority(loadToBeShedd));
-                        Chromos[c].MutateGeneClose();
+                        Chromos[c].SetStatusOnOff(1);
                     }
                     while (GetSumOfSheddLoad() < loadToBeShedd)
                     {
@@ -239,7 +265,7 @@ namespace LoadSheddingGAOptimization
                             {
                                 if (Chromos[i].On_Off == 0)
                                 {
-                                    Chromos[i].MutateGeneClose();
+                                    Chromos[i].SetStatusOnOff(1);
                                     break;
                                 }
                             }
@@ -251,7 +277,7 @@ namespace LoadSheddingGAOptimization
                             {
                                 if (Chromos[i].On_Off == 0)
                                 {
-                                    Chromos[i].MutateGeneClose();
+                                    Chromos[i].SetStatusOnOff(1);
                                     break;
                                 }
                             }
@@ -267,7 +293,7 @@ namespace LoadSheddingGAOptimization
                     for (int i = 0; i < 3; i++)
                     {
                         c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));
-                        Chromos[c].MutateGeneOpen();
+                        Chromos[c].SetStatusOnOff(0);
                     }
                     while (GetSumOfSheddLoad() < loadToBeShedd)
                     {
@@ -278,7 +304,7 @@ namespace LoadSheddingGAOptimization
                             {
                                 if (Chromos[i].On_Off == 0)
                                 {
-                                    Chromos[i].MutateGeneClose();
+                                    Chromos[i].SetStatusOnOff(1);
                                     break;
                                 }
                             }
@@ -290,7 +316,7 @@ namespace LoadSheddingGAOptimization
                             {
                                 if (Chromos[i].On_Off == 0)
                                 {
-                                    Chromos[i].MutateGeneClose();
+                                    Chromos[i].SetStatusOnOff(1);
                                     break;
                                 }
                             }
@@ -299,6 +325,22 @@ namespace LoadSheddingGAOptimization
                     }
                 }
             }
+        }
+
+        public void Mutate(double loadToBeShedd, int i)
+        {
+            int priority = CheckWhatPriorityShouldBeShedd(loadToBeShedd);
+            int startInd = StartIndexInListOfPriority(priority);
+            int endInd = EndIndexInListOfPriority(priority);
+            int mutateAtInd = 0;
+
+            Random x = new Random();
+            for (int k = 0; k < 2; k++)
+            {
+                mutateAtInd = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));        //Next(InitializeOrMutateByPriority(loadToBeShedd));
+                Chromos[mutateAtInd].MutateGene();
+            }
+
         }
 
         private double GetSumOfSheddLoad()
@@ -311,10 +353,62 @@ namespace LoadSheddingGAOptimization
                     sum += Chromos[i].Load;
                 }
             }
-            return Math.Round(sum,1);
+            sum = Math.Round(sum, 1);
+            return sum;
         }
 
-        public int InitializeOrMutateByPriority(double loadToBeShedd)
+        public void Mutate(double loadToBeShedd, Boolean i)
+        {
+            int priority = CheckWhatPriorityShouldBeShedd(loadToBeShedd);
+            if (GetSumOfSheddLoad() < loadToBeShedd)
+            {
+                MutateGeneTo(1, priority);
+            }
+            else
+            {
+                MutateGeneTo(0, priority);
+            }
+        }
+         
+        private void MutateGeneTo(int newStatus, int priority)
+        {
+            int startInd = StartIndexInListOfPriority(priority);
+            int endInd = EndIndexInListOfPriority(priority);
+            int mutateAtInd = 0;
+            int oldStatus =1;
+            Boolean ismutated = false;
+
+            Random x = new Random();
+            mutateAtInd = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority)); 
+            if (newStatus == 0)
+            {
+                oldStatus = 1;
+            }
+            for (int k = mutateAtInd; k < endInd; k++)
+            {
+                if (Chromos[k].On_Off == oldStatus)
+                {
+                    Chromos[k].SetStatusOnOff(newStatus);
+                    ismutated = true;
+                    break;
+                }
+            }
+            if (!ismutated)
+            {
+
+                for (int k = mutateAtInd; k >= startInd; k--)
+                {
+                    if (Chromos[k].On_Off == oldStatus)
+                    {
+                        Chromos[k].SetStatusOnOff(newStatus);
+                        ismutated = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        public int CheckWhatPriorityShouldBeShedd(double loadToBeShedd)
         {
             double sum =0;
             for (int i = 0; i < Chromos.Count; i++)
@@ -346,6 +440,10 @@ namespace LoadSheddingGAOptimization
         private int NumbOfConsByPriority(int priority)
         {
             int count = 0;
+            if(priority == 0)
+            {
+                return 0;
+            }
             if(priority == 1)
             {
                 for (int i = 0; i < Chromos.Count; i++)
@@ -437,7 +535,8 @@ namespace LoadSheddingGAOptimization
 
         private void SetAllConsumersOffByPriority(int priority)
         {
-            for (int i = 0; i < NumbOfConsByPriority(priority); i++)
+            int numbOfConsByPriority = NumbOfConsByPriority(priority);
+            for (int i = 0; i < numbOfConsByPriority; i++)
             {
                 Chromos[i].On_Off = 1;
             }

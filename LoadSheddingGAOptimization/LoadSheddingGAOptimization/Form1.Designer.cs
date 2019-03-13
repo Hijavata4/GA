@@ -28,8 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.btnXMLloader = new System.Windows.Forms.Button();
             this.btnShowList = new System.Windows.Forms.Button();
@@ -131,7 +132,7 @@
             this.listViewCons.GridLines = true;
             this.listViewCons.Location = new System.Drawing.Point(12, 109);
             this.listViewCons.Name = "listViewCons";
-            this.listViewCons.Size = new System.Drawing.Size(302, 268);
+            this.listViewCons.Size = new System.Drawing.Size(302, 360);
             this.listViewCons.TabIndex = 2;
             this.listViewCons.UseCompatibleStateImageBehavior = false;
             this.listViewCons.View = System.Windows.Forms.View.Details;
@@ -165,7 +166,7 @@
             this.listViewGen.GridLines = true;
             this.listViewGen.Location = new System.Drawing.Point(320, 109);
             this.listViewGen.Name = "listViewGen";
-            this.listViewGen.Size = new System.Drawing.Size(223, 268);
+            this.listViewGen.Size = new System.Drawing.Size(223, 360);
             this.listViewGen.TabIndex = 3;
             this.listViewGen.UseCompatibleStateImageBehavior = false;
             this.listViewGen.View = System.Windows.Forms.View.Details;
@@ -363,25 +364,34 @@
             // chart1
             // 
             this.chart1.BorderlineWidth = 3;
-            chartArea4.AxisX.Title = "Generation";
-            chartArea4.AxisY.Title = "BestFit";
-            chartArea4.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea4);
-            legend4.Enabled = false;
-            legend4.Name = "Legend1";
-            this.chart1.Legends.Add(legend4);
-            this.chart1.Location = new System.Drawing.Point(549, 109);
+            chartArea2.AxisX.Title = "Generation";
+            chartArea2.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            legend2.Position.Auto = false;
+            legend2.Position.Height = 14.23221F;
+            legend2.Position.Width = 35.45707F;
+            legend2.Position.X = 61.54293F;
+            legend2.Position.Y = 3F;
+            this.chart1.Legends.Add(legend2);
+            this.chart1.Location = new System.Drawing.Point(546, 109);
             this.chart1.Name = "chart1";
             this.chart1.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.SeaGreen;
             this.chart1.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            series4.BorderColor = System.Drawing.Color.White;
+            series3.BorderColor = System.Drawing.Color.White;
+            series3.BorderWidth = 3;
+            series3.ChartArea = "ChartArea1";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series3.Legend = "Legend1";
+            series3.Name = "BestFit";
             series4.BorderWidth = 3;
             series4.ChartArea = "ChartArea1";
             series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
             series4.Legend = "Legend1";
-            series4.Name = "BestFit";
+            series4.Name = "AverageFitness";
+            this.chart1.Series.Add(series3);
             this.chart1.Series.Add(series4);
-            this.chart1.Size = new System.Drawing.Size(362, 268);
+            this.chart1.Size = new System.Drawing.Size(466, 360);
             this.chart1.TabIndex = 15;
             this.chart1.Text = "chart1";
             // 
@@ -686,6 +696,7 @@
             this.lbEndTime.Size = new System.Drawing.Size(13, 13);
             this.lbEndTime.TabIndex = 28;
             this.lbEndTime.Text = "0";
+            this.lbEndTime.Visible = false;
             // 
             // label10
             // 
@@ -695,6 +706,7 @@
             this.label10.Size = new System.Drawing.Size(51, 13);
             this.label10.TabIndex = 27;
             this.label10.Text = "End time:";
+            this.label10.Visible = false;
             // 
             // lbBestFitTime
             // 
@@ -704,6 +716,7 @@
             this.lbBestFitTime.Size = new System.Drawing.Size(13, 13);
             this.lbBestFitTime.TabIndex = 26;
             this.lbBestFitTime.Text = "0";
+            this.lbBestFitTime.Visible = false;
             // 
             // label12
             // 
@@ -713,6 +726,7 @@
             this.label12.Size = new System.Drawing.Size(64, 13);
             this.label12.TabIndex = 25;
             this.label12.Text = "BestFit time:";
+            this.label12.Visible = false;
             // 
             // label13
             // 
@@ -722,6 +736,7 @@
             this.label13.Size = new System.Drawing.Size(54, 13);
             this.label13.TabIndex = 24;
             this.label13.Text = "Start time:";
+            this.label13.Visible = false;
             // 
             // lbStartTime
             // 
@@ -731,6 +746,7 @@
             this.lbStartTime.Size = new System.Drawing.Size(13, 13);
             this.lbStartTime.TabIndex = 23;
             this.lbStartTime.Text = "0";
+            this.lbStartTime.Visible = false;
             // 
             // textBox1
             // 
@@ -755,7 +771,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(920, 389);
+            this.ClientSize = new System.Drawing.Size(1024, 481);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.lbEndTime);
