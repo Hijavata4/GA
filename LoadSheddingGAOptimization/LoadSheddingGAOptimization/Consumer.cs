@@ -9,57 +9,56 @@ namespace LoadSheddingGAOptimization
     class Consumer
     {
         public string Name;
-        //private Random rnd = new Random();
-        private int on_off;
-        public int On_Off
+        private int status; // 0 - On , 1- Off
+        public int Status
         {
             set
             {
-                on_off = value;
+                status = value;
             }
             get
             {
-                return on_off;
+                return status;
             }
-        } // 0 - Closed , 1- Open
+        } 
         public double Load;
         public int Priority;
         public int Fitness { get; set; }
 
 
-        public Consumer(string name, int on_off, double load, int priority)
+        public Consumer(string name, int Status, double load, int priority)
         {
             Name = name;
-            on_off = on_off;
+            Status = Status;
             Load = Math.Round(load, 1);
             Priority = priority;
         }
 
            public void MutateGene()
            {
-               if (on_off ==  0)
+               if (Status ==  0)
                {
-                    on_off = 1;
+                    Status = 1;
                }
                else
                {
-                    on_off = 0;
+                    Status = 0;
                }
            } 
 
         public void SetStatusOnOff(int status)
         {
-            On_Off = status;
+            Status = status;
         }
 
 		public void MutateGeneOpen()
         {
-            On_Off = 0;
+            Status = 0;
         }
 
 		public void MutateGeneClose()
         {
-			On_Off = 1;
+			Status = 1;
 		}
     }
 }

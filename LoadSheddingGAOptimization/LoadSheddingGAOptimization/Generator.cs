@@ -10,13 +10,13 @@ namespace LoadSheddingGAOptimization
     {
         public string Name;
         public double P;
-        public int On_Off; //On-0 , Off-1
+        public int Status; //On-0 , Off-1
 
-        public Generator(string name, double xP, int on_off)
+        public Generator(string name, double xP, int Status)
         {
             Name = name;
             P = xP;
-            On_Off = on_off;
+            Status = Status;
         }
     }
 }

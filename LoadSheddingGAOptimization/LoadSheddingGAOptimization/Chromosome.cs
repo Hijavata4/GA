@@ -36,7 +36,7 @@ namespace LoadSheddingGAOptimization
             Consumer cons;
             for (int i = 0; i < lst.Count; i++)
             {
-                cons = new Consumer(lst[i].Name, lst[i].On_Off, lst[i].Load, lst[i].Priority);
+                cons = new Consumer(lst[i].Name, lst[i].Status, lst[i].Load, lst[i].Priority);
                 Chromos.Add(cons);
             }
         }
@@ -64,11 +64,11 @@ namespace LoadSheddingGAOptimization
             {       
                 if (x.Next(100) < 50)
                 {
-                    Chromos[i].On_Off = 1;
+                    Chromos[i].Status = 1;
                 }
                 else
                 {
-                    Chromos[i].On_Off = 0;
+                    Chromos[i].Status = 0;
                 }
             }
         }
@@ -96,7 +96,7 @@ namespace LoadSheddingGAOptimization
                         {
                             for (int i = c; i < EndIndexInListOfPriority(priority); i++)
                             {
-                                if (Chromos[i].On_Off == 0)
+                                if (Chromos[i].Status == 0)
                                 {
                                     Chromos[i].SetStatusOnOff(1);
                                     break;
@@ -109,7 +109,7 @@ namespace LoadSheddingGAOptimization
                         {
                             for (int i = c; i > StartIndexInListOfPriority(priority); i--)
                             {
-                                if (Chromos[i].On_Off == 0)
+                                if (Chromos[i].Status == 0)
                                 {
                                     Chromos[i].SetStatusOnOff(1);
                                     break;
@@ -136,7 +136,7 @@ namespace LoadSheddingGAOptimization
                         {
                             for (int i = c; i < EndIndexInListOfPriority(priority); i++)
                             {
-                                if (Chromos[i].On_Off == 0)
+                                if (Chromos[i].Status == 0)
                                 {
                                     Chromos[i].SetStatusOnOff(1);
                                     break;
@@ -148,7 +148,7 @@ namespace LoadSheddingGAOptimization
                         {
                             for (int i = c; i > StartIndexInListOfPriority(priority); i--)
                             {
-                                if (Chromos[i].On_Off == 0)
+                                if (Chromos[i].Status == 0)
                                 {
                                     Chromos[i].SetStatusOnOff(1);
                                     break;
@@ -181,7 +181,7 @@ namespace LoadSheddingGAOptimization
                         {
                             for (int i = c; i < EndIndexInListOfPriority(priority); i++)
                             {
-                                if (Chromos[i].On_Off == 0)
+                                if (Chromos[i].Status == 0)
                                 {
                                     Chromos[i].SetStatusOnOff(1);
                                     break;
@@ -193,7 +193,7 @@ namespace LoadSheddingGAOptimization
                         {
                             for (int i = c; i > StartIndexInListOfPriority(priority); i--)
                             {
-                                if (Chromos[i].On_Off == 0)
+                                if (Chromos[i].Status == 0)
                                 {
                                     Chromos[i].SetStatusOnOff(1);
                                     break;
@@ -220,7 +220,7 @@ namespace LoadSheddingGAOptimization
                         {
                             for (int i = c; i < EndIndexInListOfPriority(priority); i++)
                             {
-                                if (Chromos[i].On_Off == 0)
+                                if (Chromos[i].Status == 0)
                                 {
                                     Chromos[i].SetStatusOnOff(1);
                                     break;
@@ -232,7 +232,7 @@ namespace LoadSheddingGAOptimization
                         {
                             for (int i = c; i > StartIndexInListOfPriority(priority); i--)
                             {
-                                if (Chromos[i].On_Off == 0)
+                                if (Chromos[i].Status == 0)
                                 {
                                     Chromos[i].SetStatusOnOff(1);
                                     break;
@@ -263,7 +263,7 @@ namespace LoadSheddingGAOptimization
                         {
                             for (int i = c; i < EndIndexInListOfPriority(priority); i++)
                             {
-                                if (Chromos[i].On_Off == 0)
+                                if (Chromos[i].Status == 0)
                                 {
                                     Chromos[i].SetStatusOnOff(1);
                                     break;
@@ -275,7 +275,7 @@ namespace LoadSheddingGAOptimization
                         {
                             for (int i = c; i > StartIndexInListOfPriority(priority); i--)
                             {
-                                if (Chromos[i].On_Off == 0)
+                                if (Chromos[i].Status == 0)
                                 {
                                     Chromos[i].SetStatusOnOff(1);
                                     break;
@@ -302,7 +302,7 @@ namespace LoadSheddingGAOptimization
                         {
                             for (int i = c; i < EndIndexInListOfPriority(priority); i++)
                             {
-                                if (Chromos[i].On_Off == 0)
+                                if (Chromos[i].Status == 0)
                                 {
                                     Chromos[i].SetStatusOnOff(1);
                                     break;
@@ -314,7 +314,7 @@ namespace LoadSheddingGAOptimization
                         {
                             for (int i = c; i > StartIndexInListOfPriority(priority); i--)
                             {
-                                if (Chromos[i].On_Off == 0)
+                                if (Chromos[i].Status == 0)
                                 {
                                     Chromos[i].SetStatusOnOff(1);
                                     break;
@@ -348,7 +348,7 @@ namespace LoadSheddingGAOptimization
             double sum = 0.0f;
             for (int i = 0; i < Chromos.Count; i++)
             {
-                if (Chromos[i].On_Off == 1)
+                if (Chromos[i].Status == 1)
                 {
                     sum += Chromos[i].Load;
                 }
@@ -386,7 +386,7 @@ namespace LoadSheddingGAOptimization
             }
             for (int k = mutateAtInd; k < endInd; k++)
             {
-                if (Chromos[k].On_Off == oldStatus)
+                if (Chromos[k].Status == oldStatus)
                 {
                     Chromos[k].SetStatusOnOff(newStatus);
                     ismutated = true;
@@ -398,7 +398,7 @@ namespace LoadSheddingGAOptimization
 
                 for (int k = mutateAtInd; k >= startInd; k--)
                 {
-                    if (Chromos[k].On_Off == oldStatus)
+                    if (Chromos[k].Status == oldStatus)
                     {
                         Chromos[k].SetStatusOnOff(newStatus);
                         ismutated = true;
@@ -479,7 +479,7 @@ namespace LoadSheddingGAOptimization
         {
             for(int i=0; i< NumbOfConsByPriority(priority); i++)
             {
-                if (Chromos[i].Priority == priority && Chromos[i].On_Off == 0)
+                if (Chromos[i].Priority == priority && Chromos[i].Status == 0)
                 {
                     return false;
                 }
@@ -538,7 +538,7 @@ namespace LoadSheddingGAOptimization
             int numbOfConsByPriority = NumbOfConsByPriority(priority);
             for (int i = 0; i < numbOfConsByPriority; i++)
             {
-                Chromos[i].On_Off = 1;
+                Chromos[i].Status = 1;
             }
         }
 

@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Status;
 
 namespace LoadSheddingGAOptimization
 {
@@ -47,7 +46,7 @@ namespace LoadSheddingGAOptimization
             double sum = 0;
             for (int i = 0; i < lstCons.Count; i++)
             {
-                if (lstCons[i].On_Off == 1)
+                if (lstCons[i].Status == 1)
                 {
                     sum += lstCons[i].Load;
                 }
@@ -139,7 +138,7 @@ namespace LoadSheddingGAOptimization
                     // BestFitChangeRate = 0;
                     for (int k=0; k<Population[i].Chromos.Count;k++ )
                     {
-                        bestFit.Chromos[k].On_Off = Population[i].Chromos[k].On_Off;
+                        bestFit.Chromos[k].Status = Population[i].Chromos[k].Status;
                     }
                     bestFit.fitness = Population[i].fitness;
                     BestFitAtGeneneration = Generation;
@@ -178,9 +177,9 @@ namespace LoadSheddingGAOptimization
             {
                 if (i % 3 == 0)
                 {
-                    if (xParent1.Chromos[i].On_Off != xParent2.Chromos[i].On_Off)
+                    if (xParent1.Chromos[i].Status != xParent2.Chromos[i].Status)
                     {
-                        Child1.Chromos[i].On_Off = xParent2.Chromos[i].On_Off;
+                        Child1.Chromos[i].Status = xParent2.Chromos[i].Status;
                     }
                 }  
             }
@@ -189,9 +188,9 @@ namespace LoadSheddingGAOptimization
             {
                 if (k % 3 != 0)
                 {
-                    if (xParent1.Chromos[k].On_Off != xParent2.Chromos[k].On_Off)
+                    if (xParent1.Chromos[k].Status != xParent2.Chromos[k].Status)
                     {
-                        Child2.Chromos[k].On_Off = xParent1.Chromos[k].On_Off;
+                        Child2.Chromos[k].Status = xParent1.Chromos[k].Status;
                     }
                 }
             }
@@ -218,16 +217,16 @@ namespace LoadSheddingGAOptimization
 
             for (int i = 0; i < xParent1.Chromos.Count; i+=2)
             {
-                if (xParent1.Chromos[i].On_Off != xParent2.Chromos[i].On_Off)
+                if (xParent1.Chromos[i].Status != xParent2.Chromos[i].Status)
                 {
-                    Child1.Chromos[i].On_Off = xParent2.Chromos[i].On_Off;
+                    Child1.Chromos[i].Status = xParent2.Chromos[i].Status;
                 }
             }
             for (int k =1; k < xParent1.Chromos.Count ; k+=2)
             {
-                if (xParent1.Chromos[k].On_Off != xParent2.Chromos[k].On_Off)
+                if (xParent1.Chromos[k].Status != xParent2.Chromos[k].Status)
                 {
-                    Child2.Chromos[k].On_Off = xParent1.Chromos[k].On_Off;
+                    Child2.Chromos[k].Status = xParent1.Chromos[k].Status;
                 }
             }
             if (random.Next(0, 100) < 10)
@@ -389,7 +388,7 @@ namespace LoadSheddingGAOptimization
                 foreach (XmlNode node in doc.DocumentElement)
                 {
                     Generator gen = new Generator(node.Attributes[0].InnerText, Convert.ToSingle(node.Attributes[1].InnerText), Convert.ToInt32(node.Attributes[2].InnerText));
-                    InitializeGens(Convert.ToString(gen.On_Off), gen.Name);
+                    InitializeGens(Convert.ToString(gen.Status), gen.Name);
                     lstGens.Add(gen);
                 }
                 IsXmlNotLoaded = false;
@@ -414,7 +413,7 @@ namespace LoadSheddingGAOptimization
                     for (int i = 0; i < lstConsumers.Count; i++)
                     {
                         ListViewItem item = new ListViewItem(lstConsumers[i].Name);
-                        item.SubItems.Add(Convert.ToString(lstConsumers[i].On_Off));
+                        item.SubItems.Add(Convert.ToString(lstConsumers[i].Status));
                         item.SubItems.Add(Convert.ToString(lstConsumers[i].Load));
                         item.SubItems.Add(Convert.ToString(lstConsumers[i].Priority));
                         listViewCons.Items.Add(item);
@@ -423,7 +422,7 @@ namespace LoadSheddingGAOptimization
                     {
                         ListViewItem item = new ListViewItem(lstGens[i].Name);
                         item.SubItems.Add(Convert.ToString(lstGens[i].P));
-                        item.SubItems.Add(Convert.ToString(lstGens[i].On_Off));
+                        item.SubItems.Add(Convert.ToString(lstGens[i].Status));
                         listViewGen.Items.Add(item);
                     }
                     IsViewListsFilled = true;
@@ -445,13 +444,13 @@ namespace LoadSheddingGAOptimization
                     if (String.Equals(listViewGen.Items[i].SubItems[2].Text, Off))
                     {
                         listViewGen.Items[i].SubItems[2].Text = On;
-                        lstGens[i].On_Off = Convert.ToInt32(On);
+                        lstGens[i].Status = Convert.ToInt32(On);
                         btnGen1.BackColor = Color.Green;
                     }
                     else
                     {
                         listViewGen.Items[i].SubItems[2].Text = Off;
-                        lstGens[i].On_Off = Convert.ToInt32(Off);
+                        lstGens[i].Status = Convert.ToInt32(Off);
                         btnGen1.BackColor = Color.Red;
                     }
                 }
@@ -467,13 +466,13 @@ namespace LoadSheddingGAOptimization
                     if (String.Equals(listViewGen.Items[i].SubItems[2].Text, Off))
                     {
                         listViewGen.Items[i].SubItems[2].Text = On;
-                        lstGens[i].On_Off = Convert.ToInt32(On);
+                        lstGens[i].Status = Convert.ToInt32(On);
                         btnGen2.BackColor = Color.Green;
                     }
                     else
                     {
                         listViewGen.Items[i].SubItems[2].Text = Off;
-                        lstGens[i].On_Off = Convert.ToInt32(Off);
+                        lstGens[i].Status = Convert.ToInt32(Off);
                         btnGen2.BackColor = Color.Red;
                     }
                 }
@@ -489,13 +488,13 @@ namespace LoadSheddingGAOptimization
                     if (String.Equals(listViewGen.Items[i].SubItems[2].Text, Off))
                     {
                         listViewGen.Items[i].SubItems[2].Text = On;
-                        lstGens[i].On_Off = Convert.ToInt32(On);
+                        lstGens[i].Status = Convert.ToInt32(On);
                         btnGen3.BackColor = Color.Green;
                     }
                     else
                     {
                         listViewGen.Items[i].SubItems[2].Text = Off;
-                        lstGens[i].On_Off = Convert.ToInt32(Off);
+                        lstGens[i].Status = Convert.ToInt32(Off);
                         btnGen3.BackColor = Color.Red;
                     }
                 }
@@ -512,13 +511,13 @@ namespace LoadSheddingGAOptimization
                     if (String.Equals(listViewGen.Items[i].SubItems[2].Text, Off))
                     {
                         listViewGen.Items[i].SubItems[2].Text = On;
-                        lstGens[i].On_Off = Convert.ToInt32(On);
+                        lstGens[i].Status = Convert.ToInt32(On);
                         btnGen4.BackColor = Color.Green;
                     }
                     else
                     {
                         listViewGen.Items[i].SubItems[2].Text = Off;
-                        lstGens[i].On_Off = Convert.ToInt32(Off);
+                        lstGens[i].Status = Convert.ToInt32(Off);
                         btnGen4.BackColor = Color.Red;
                     }
                 }
@@ -535,13 +534,13 @@ namespace LoadSheddingGAOptimization
                     if (String.Equals(listViewGen.Items[i].SubItems[2].Text, Off))
                     {
                         listViewGen.Items[i].SubItems[2].Text = On;
-                        lstGens[i].On_Off = Convert.ToInt32(On);
+                        lstGens[i].Status = Convert.ToInt32(On);
                         btnGen5.BackColor = Color.Green;
                     }
                     else
                     {
                         listViewGen.Items[i].SubItems[2].Text = Off;
-                        lstGens[i].On_Off = Convert.ToInt32(Off);
+                        lstGens[i].Status = Convert.ToInt32(Off);
                         btnGen5.BackColor = Color.Red;
                     }
                 }
@@ -558,13 +557,13 @@ namespace LoadSheddingGAOptimization
                     if (String.Equals(listViewGen.Items[i].SubItems[2].Text, Off))
                     {
                         listViewGen.Items[i].SubItems[2].Text = On;
-                        lstGens[i].On_Off = Convert.ToInt32(On);
+                        lstGens[i].Status = Convert.ToInt32(On);
                         btnGen6.BackColor = Color.Green;
                     }
                     else
                     {
                         listViewGen.Items[i].SubItems[2].Text = Off;
-                        lstGens[i].On_Off = Convert.ToInt32(Off);
+                        lstGens[i].Status = Convert.ToInt32(Off);
                         btnGen6.BackColor = Color.Red;
                     }
                 }
@@ -576,7 +575,7 @@ namespace LoadSheddingGAOptimization
             double Sum = 0;
             for (int i = 0; i < lstGens.Count; i++)
             {
-                if (lstGens[i].On_Off == 1)
+                if (lstGens[i].Status == 1)
                 {
                     Sum += lstGens[i].P;
 
@@ -635,7 +634,7 @@ namespace LoadSheddingGAOptimization
             for (int i = 0; i < bestFit.Chromos.Count; i++)
             {
                 ListViewItem item = new ListViewItem(bestFit.Chromos[i].Name);
-                item.SubItems.Add(Convert.ToString(bestFit.Chromos[i].On_Off));
+                item.SubItems.Add(Convert.ToString(bestFit.Chromos[i].Status));
                 item.SubItems.Add(Convert.ToString(bestFit.Chromos[i].Load));
                 item.SubItems.Add(Convert.ToString(bestFit.Chromos[i].Priority));
                 listViewCons.Items.Add(item);
@@ -665,7 +664,7 @@ namespace LoadSheddingGAOptimization
                 foreach (XmlNode node in doc.DocumentElement)
                 {
                     Generator gen = new Generator(node.Attributes[0].InnerText, Convert.ToSingle(node.Attributes[1].InnerText), Convert.ToInt32(node.Attributes[2].InnerText));
-                    InitializeGens1(Convert.ToString(gen.On_Off), gen.Name);
+                    InitializeGens1(Convert.ToString(gen.Status), gen.Name);
                     lstGens.Add(gen);
                 }
                 IsXmlNotLoaded = false;
@@ -888,13 +887,13 @@ namespace LoadSheddingGAOptimization
                     if (String.Equals(listViewGen.Items[i].SubItems[2].Text, Off))
                     {
                         listViewGen.Items[i].SubItems[2].Text = On;
-                        lstGens[i].On_Off = Convert.ToInt32(On);
+                        lstGens[i].Status = Convert.ToInt32(On);
                         btnGenX1.BackColor = Color.Green;
                     }
                     else
                     {
                         listViewGen.Items[i].SubItems[2].Text = Off;
-                        lstGens[i].On_Off = Convert.ToInt32(Off);
+                        lstGens[i].Status = Convert.ToInt32(Off);
                         btnGenX1.BackColor = Color.Red;
                     }
                 }
@@ -910,13 +909,13 @@ namespace LoadSheddingGAOptimization
                     if (String.Equals(listViewGen.Items[i].SubItems[2].Text, Off))
                     {
                         listViewGen.Items[i].SubItems[2].Text = On;
-                        lstGens[i].On_Off = Convert.ToInt32(On);
+                        lstGens[i].Status = Convert.ToInt32(On);
                         btnGenX2.BackColor = Color.Green;
                     }
                     else
                     {
                         listViewGen.Items[i].SubItems[2].Text = Off;
-                        lstGens[i].On_Off = Convert.ToInt32(Off);
+                        lstGens[i].Status = Convert.ToInt32(Off);
                         btnGenX2.BackColor = Color.Red;
                     }
                 }
@@ -932,13 +931,13 @@ namespace LoadSheddingGAOptimization
                     if (String.Equals(listViewGen.Items[i].SubItems[2].Text, Off))
                     {
                         listViewGen.Items[i].SubItems[2].Text = On;
-                        lstGens[i].On_Off = Convert.ToInt32(On);
+                        lstGens[i].Status = Convert.ToInt32(On);
                         btnGenX3.BackColor = Color.Green;
                     }
                     else
                     {
                         listViewGen.Items[i].SubItems[2].Text = Off;
-                        lstGens[i].On_Off = Convert.ToInt32(Off);
+                        lstGens[i].Status = Convert.ToInt32(Off);
                         btnGenX3.BackColor = Color.Red;
                     }
                 }
@@ -954,13 +953,13 @@ namespace LoadSheddingGAOptimization
                     if (String.Equals(listViewGen.Items[i].SubItems[2].Text, Off))
                     {
                         listViewGen.Items[i].SubItems[2].Text = On;
-                        lstGens[i].On_Off = Convert.ToInt32(On);
+                        lstGens[i].Status = Convert.ToInt32(On);
                         btnGenX4.BackColor = Color.Green;
                     }
                     else
                     {
                         listViewGen.Items[i].SubItems[2].Text = Off;
-                        lstGens[i].On_Off = Convert.ToInt32(Off);
+                        lstGens[i].Status = Convert.ToInt32(Off);
                         btnGenX4.BackColor = Color.Red;
                     }
                 }
@@ -976,13 +975,13 @@ namespace LoadSheddingGAOptimization
                     if (String.Equals(listViewGen.Items[i].SubItems[2].Text, Off))
                     {
                         listViewGen.Items[i].SubItems[2].Text = On;
-                        lstGens[i].On_Off = Convert.ToInt32(On);
+                        lstGens[i].Status = Convert.ToInt32(On);
                         btnGenX5.BackColor = Color.Green;
                     }
                     else
                     {
                         listViewGen.Items[i].SubItems[2].Text = Off;
-                        lstGens[i].On_Off = Convert.ToInt32(Off);
+                        lstGens[i].Status = Convert.ToInt32(Off);
                         btnGenX5.BackColor = Color.Red;
                     }
                 }
@@ -998,13 +997,13 @@ namespace LoadSheddingGAOptimization
                     if (String.Equals(listViewGen.Items[i].SubItems[2].Text, Off))
                     {
                         listViewGen.Items[i].SubItems[2].Text = On;
-                        lstGens[i].On_Off = Convert.ToInt32(On);
+                        lstGens[i].Status = Convert.ToInt32(On);
                         btnGenX6.BackColor = Color.Green;
                     }
                     else
                     {
                         listViewGen.Items[i].SubItems[2].Text = Off;
-                        lstGens[i].On_Off = Convert.ToInt32(Off);
+                        lstGens[i].Status = Convert.ToInt32(Off);
                         btnGenX6.BackColor = Color.Red;
                     }
                 }
@@ -1020,13 +1019,13 @@ namespace LoadSheddingGAOptimization
                     if (String.Equals(listViewGen.Items[i].SubItems[2].Text, Off))
                     {
                         listViewGen.Items[i].SubItems[2].Text = On;
-                        lstGens[i].On_Off = Convert.ToInt32(On);
+                        lstGens[i].Status = Convert.ToInt32(On);
                         btnGenX7.BackColor = Color.Green;
                     }
                     else
                     {
                         listViewGen.Items[i].SubItems[2].Text = Off;
-                        lstGens[i].On_Off = Convert.ToInt32(Off);
+                        lstGens[i].Status = Convert.ToInt32(Off);
                         btnGenX7.BackColor = Color.Red;
                     }
                 }
@@ -1042,13 +1041,13 @@ namespace LoadSheddingGAOptimization
                     if (String.Equals(listViewGen.Items[i].SubItems[2].Text, Off))
                     {
                         listViewGen.Items[i].SubItems[2].Text = On;
-                        lstGens[i].On_Off = Convert.ToInt32(On);
+                        lstGens[i].Status = Convert.ToInt32(On);
                         btnGenX8.BackColor = Color.Green;
                     }
                     else
                     {
                         listViewGen.Items[i].SubItems[2].Text = Off;
-                        lstGens[i].On_Off = Convert.ToInt32(Off);
+                        lstGens[i].Status = Convert.ToInt32(Off);
                         btnGenX8.BackColor = Color.Red;
                     }
                 }
@@ -1064,13 +1063,13 @@ namespace LoadSheddingGAOptimization
                     if (String.Equals(listViewGen.Items[i].SubItems[2].Text, Off))
                     {
                         listViewGen.Items[i].SubItems[2].Text = On;
-                        lstGens[i].On_Off = Convert.ToInt32(On);
+                        lstGens[i].Status = Convert.ToInt32(On);
                         btnGenX9.BackColor = Color.Green;
                     }
                     else
                     {
                         listViewGen.Items[i].SubItems[2].Text = Off;
-                        lstGens[i].On_Off = Convert.ToInt32(Off);
+                        lstGens[i].Status = Convert.ToInt32(Off);
                         btnGenX9.BackColor = Color.Red;
                     }
                 }
@@ -1086,13 +1085,13 @@ namespace LoadSheddingGAOptimization
                     if (String.Equals(listViewGen.Items[i].SubItems[2].Text, Off))
                     {
                         listViewGen.Items[i].SubItems[2].Text = On;
-                        lstGens[i].On_Off = Convert.ToInt32(On);
+                        lstGens[i].Status = Convert.ToInt32(On);
                         btnGenX10.BackColor = Color.Green;
                     }
                     else
                     {
                         listViewGen.Items[i].SubItems[2].Text = Off;
-                        lstGens[i].On_Off = Convert.ToInt32(Off);
+                        lstGens[i].Status = Convert.ToInt32(Off);
                         btnGenX10.BackColor = Color.Red;
                     }
                 }
@@ -1108,13 +1107,13 @@ namespace LoadSheddingGAOptimization
                     if (String.Equals(listViewGen.Items[i].SubItems[2].Text, Off))
                     {
                         listViewGen.Items[i].SubItems[2].Text = On;
-                        lstGens[i].On_Off = Convert.ToInt32(On);
+                        lstGens[i].Status = Convert.ToInt32(On);
                         btnGenX11.BackColor = Color.Green;
                     }
                     else
                     {
                         listViewGen.Items[i].SubItems[2].Text = Off;
-                        lstGens[i].On_Off = Convert.ToInt32(Off);
+                        lstGens[i].Status = Convert.ToInt32(Off);
                         btnGenX11.BackColor = Color.Red;
                     }
                 }
@@ -1130,13 +1129,13 @@ namespace LoadSheddingGAOptimization
                     if (String.Equals(listViewGen.Items[i].SubItems[2].Text, Off))
                     {
                         listViewGen.Items[i].SubItems[2].Text = On;
-                        lstGens[i].On_Off = Convert.ToInt32(On);
+                        lstGens[i].Status = Convert.ToInt32(On);
                         btnGenX12.BackColor = Color.Green;
                     }
                     else
                     {
                         listViewGen.Items[i].SubItems[2].Text = Off;
-                        lstGens[i].On_Off = Convert.ToInt32(Off);
+                        lstGens[i].Status = Convert.ToInt32(Off);
                         btnGenX12.BackColor = Color.Red;
                     }
                 }
@@ -1152,13 +1151,13 @@ namespace LoadSheddingGAOptimization
                     if (String.Equals(listViewGen.Items[i].SubItems[2].Text, Off))
                     {
                         listViewGen.Items[i].SubItems[2].Text = On;
-                        lstGens[i].On_Off = Convert.ToInt32(On);
+                        lstGens[i].Status = Convert.ToInt32(On);
                         btnGenX13.BackColor = Color.Green;
                     }
                     else
                     {
                         listViewGen.Items[i].SubItems[2].Text = Off;
-                        lstGens[i].On_Off = Convert.ToInt32(Off);
+                        lstGens[i].Status = Convert.ToInt32(Off);
                         btnGenX13.BackColor = Color.Red;
                     }
                 }
@@ -1174,13 +1173,13 @@ namespace LoadSheddingGAOptimization
                     if (String.Equals(listViewGen.Items[i].SubItems[2].Text, Off))
                     {
                         listViewGen.Items[i].SubItems[2].Text = On;
-                        lstGens[i].On_Off = Convert.ToInt32(On);
+                        lstGens[i].Status = Convert.ToInt32(On);
                         btnGenX14.BackColor = Color.Green;
                     }
                     else
                     {
                         listViewGen.Items[i].SubItems[2].Text = Off;
-                        lstGens[i].On_Off = Convert.ToInt32(Off);
+                        lstGens[i].Status = Convert.ToInt32(Off);
                         btnGenX14.BackColor = Color.Red;
                     }
                 }
@@ -1196,13 +1195,13 @@ namespace LoadSheddingGAOptimization
                     if (String.Equals(listViewGen.Items[i].SubItems[2].Text, Off))
                     {
                         listViewGen.Items[i].SubItems[2].Text = On;
-                        lstGens[i].On_Off = Convert.ToInt32(On);
+                        lstGens[i].Status = Convert.ToInt32(On);
                         btnGenX15.BackColor = Color.Green;
                     }
                     else
                     {
                         listViewGen.Items[i].SubItems[2].Text = Off;
-                        lstGens[i].On_Off = Convert.ToInt32(Off);
+                        lstGens[i].Status = Convert.ToInt32(Off);
                         btnGenX15.BackColor = Color.Red;
                     }
                 }
@@ -1218,13 +1217,13 @@ namespace LoadSheddingGAOptimization
                     if (String.Equals(listViewGen.Items[i].SubItems[2].Text, Off))
                     {
                         listViewGen.Items[i].SubItems[2].Text = On;
-                        lstGens[i].On_Off = Convert.ToInt32(On);
+                        lstGens[i].Status = Convert.ToInt32(On);
                         btnGenX16.BackColor = Color.Green;
                     }
                     else
                     {
                         listViewGen.Items[i].SubItems[2].Text = Off;
-                        lstGens[i].On_Off = Convert.ToInt32(Off);
+                        lstGens[i].Status = Convert.ToInt32(Off);
                         btnGenX16.BackColor = Color.Red;
                     }
                 }
@@ -1240,13 +1239,13 @@ namespace LoadSheddingGAOptimization
                     if (String.Equals(listViewGen.Items[i].SubItems[2].Text, Off))
                     {
                         listViewGen.Items[i].SubItems[2].Text = On;
-                        lstGens[i].On_Off = Convert.ToInt32(On);
+                        lstGens[i].Status = Convert.ToInt32(On);
                         btnGenX17.BackColor = Color.Green;
                     }
                     else
                     {
                         listViewGen.Items[i].SubItems[2].Text = Off;
-                        lstGens[i].On_Off = Convert.ToInt32(Off);
+                        lstGens[i].Status = Convert.ToInt32(Off);
                         btnGenX17.BackColor = Color.Red;
                     }
                 }
@@ -1262,13 +1261,13 @@ namespace LoadSheddingGAOptimization
                     if (String.Equals(listViewGen.Items[i].SubItems[2].Text, Off))
                     {
                         listViewGen.Items[i].SubItems[2].Text = On;
-                        lstGens[i].On_Off = Convert.ToInt32(On);
+                        lstGens[i].Status = Convert.ToInt32(On);
                         btnGenX18.BackColor = Color.Green;
                     }
                     else
                     {
                         listViewGen.Items[i].SubItems[2].Text = Off;
-                        lstGens[i].On_Off = Convert.ToInt32(Off);
+                        lstGens[i].Status = Convert.ToInt32(Off);
                         btnGenX18.BackColor = Color.Red;
                     }
                 }
