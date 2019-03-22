@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.btnXMLloader = new System.Windows.Forms.Button();
             this.btnShowList = new System.Windows.Forms.Button();
             this.listViewCons = new System.Windows.Forms.ListView();
@@ -364,33 +364,33 @@
             // chart1
             // 
             this.chart1.BorderlineWidth = 3;
-            chartArea2.AxisX.Title = "Generation";
-            chartArea2.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            legend2.Position.Auto = false;
-            legend2.Position.Height = 14.23221F;
-            legend2.Position.Width = 35.45707F;
-            legend2.Position.X = 61.54293F;
-            legend2.Position.Y = 3F;
-            this.chart1.Legends.Add(legend2);
+            chartArea1.AxisX.Title = "Generation";
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            legend1.Position.Auto = false;
+            legend1.Position.Height = 14.23221F;
+            legend1.Position.Width = 35.45707F;
+            legend1.Position.X = 61.54293F;
+            legend1.Position.Y = 3F;
+            this.chart1.Legends.Add(legend1);
             this.chart1.Location = new System.Drawing.Point(546, 109);
             this.chart1.Name = "chart1";
             this.chart1.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.SeaGreen;
             this.chart1.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            series3.BorderColor = System.Drawing.Color.White;
-            series3.BorderWidth = 3;
-            series3.ChartArea = "ChartArea1";
-            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series3.Legend = "Legend1";
-            series3.Name = "BestFit";
-            series4.BorderWidth = 3;
-            series4.ChartArea = "ChartArea1";
-            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series4.Legend = "Legend1";
-            series4.Name = "AverageFitness";
-            this.chart1.Series.Add(series3);
-            this.chart1.Series.Add(series4);
+            series1.BorderColor = System.Drawing.Color.White;
+            series1.BorderWidth = 3;
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.Legend = "Legend1";
+            series1.Name = "BestFit";
+            series2.BorderWidth = 3;
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series2.Legend = "Legend1";
+            series2.Name = "AverageFitness";
+            this.chart1.Series.Add(series1);
+            this.chart1.Series.Add(series2);
             this.chart1.Size = new System.Drawing.Size(466, 360);
             this.chart1.TabIndex = 15;
             this.chart1.Text = "chart1";
@@ -696,7 +696,6 @@
             this.lbEndTime.Size = new System.Drawing.Size(13, 13);
             this.lbEndTime.TabIndex = 28;
             this.lbEndTime.Text = "0";
-            this.lbEndTime.Visible = false;
             // 
             // label10
             // 
@@ -706,7 +705,6 @@
             this.label10.Size = new System.Drawing.Size(51, 13);
             this.label10.TabIndex = 27;
             this.label10.Text = "End time:";
-            this.label10.Visible = false;
             // 
             // lbBestFitTime
             // 

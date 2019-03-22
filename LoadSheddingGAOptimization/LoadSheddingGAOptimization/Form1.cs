@@ -34,6 +34,7 @@ namespace LoadSheddingGAOptimization
         private Chromosome Child1;
         private Chromosome Child2;
         private Chromosome bestFit;
+        private Chromosome bestFiF;
 
         private DateTime StartTime = new DateTime();
         private DateTime BestFitTime = new DateTime();
@@ -74,13 +75,13 @@ namespace LoadSheddingGAOptimization
             }
             AverageFitness = SumOfFitn / Population.Count;
         }
-            
-        void GeneticAlgorithm(List<Consumer> lstCons, double sheddLoad)
+
+        Chromosome GeneticAlgorithm(List<Consumer> lstCons, double sheddLoad)
         {
             bestFit = new Chromosome(lstCons, sheddLoad, false);
             bestFit.SetFitness(sheddLoad);
             StartTime = DateTime.Now;
-            Invoke(new EventHandler(UpdateUIStartTimeLabel)); 
+         //   Invoke(new EventHandler(UpdateUIStartTimeLabel)); 
             StopGa = false;
             Population.Clear();
             Generation = 1;
@@ -93,9 +94,8 @@ namespace LoadSheddingGAOptimization
 
             FindBestFitInPopulation();
             BestFitTime = DateTime.Now;
-            Invoke(new EventHandler(UpdateUIGenLabel));
-         //   Invoke(new EventHandler(UpdateUIBestFitLabels));
-            Invoke(new EventHandler(UpdateUIChart));
+           // Invoke(new EventHandler(UpdateUIGenLabel));
+          //  Invoke(new EventHandler(UpdateUIChart));
 
             while (StopGa == false)
             {
@@ -117,8 +117,8 @@ namespace LoadSheddingGAOptimization
                 CalculateAverageFitness();
 
                 Generation++;
-                Invoke(new EventHandler(UpdateUIGenLabel));
-                Invoke(new EventHandler(UpdateUIChart));
+               // Invoke(new EventHandler(UpdateUIGenLabel));
+               // Invoke(new EventHandler(UpdateUIChart));
                 //BestFitChangeRate++;
 
                 SurvivorSelectionFitnessBased(Population);//SurvivorSelectionAgeBased(Population);
@@ -127,6 +127,7 @@ namespace LoadSheddingGAOptimization
             }
             EndTime = DateTime.Now;
             Invoke(new EventHandler(UpdateUIEndTimeLabel));
+            return bestFit;
         }
 
         void FindBestFitInPopulation()
@@ -143,8 +144,8 @@ namespace LoadSheddingGAOptimization
                     bestFit.fitness = Population[i].fitness;
                     BestFitAtGeneneration = Generation;
                     BestFitTime = DateTime.Now;
-                    Invoke(new EventHandler(UpdateUIBestFitLabels));
-                    Invoke(new EventHandler(UpdateUIConsumerList));
+                   // Invoke(new EventHandler(UpdateUIBestFitLabels));
+                   // Invoke(new EventHandler(UpdateUIConsumerList));
                     break;
                 }
             }        
@@ -592,7 +593,12 @@ namespace LoadSheddingGAOptimization
 
         public void GeneticAlgorithmStart()
         {
-            GeneticAlgorithm(lstConsumers, SheddLoad);
+            bestFiF = GeneticAlgorithm(lstConsumers, SheddLoad);
+            Invoke(new EventHandler(UpdateUIGenLabel));
+            Invoke(new EventHandler(UpdateUIConsumerList));
+            Invoke(new EventHandler(UpdateUIBestFitLabels));
+
+
         }
 
         private void UpdateUIGenLabel(object sender, EventArgs e)
@@ -607,9 +613,9 @@ namespace LoadSheddingGAOptimization
 
         private void UpdateUIBestFitLabels(object sender, EventArgs e)
         {
-            lbBestFit.Text = Convert.ToString(bestFit.fitness);//.ToString("0.00");
+            lbBestFit.Text = Convert.ToString(bestFiF.fitness);//.ToString("0.00");
             lbBestFitGen.Text = Convert.ToString(BestFitAtGeneneration);
-            lbLoadShedd.Text = Convert.ToString(SumOfSheddloads(bestFit.Chromos)); //SumOfSheddloads(bestFit.Chromos).ToString("0.00"); 
+            lbLoadShedd.Text = Convert.ToString(SumOfSheddloads(bestFiF.Chromos)); //SumOfSheddloads(bestFit.Chromos).ToString("0.00"); 
             lbBestFitTime.Text = Convert.ToString((BestFitTime - StartTime).TotalSeconds);
         }
         
@@ -624,19 +630,19 @@ namespace LoadSheddingGAOptimization
 
         private void UpdateUIEndTimeLabel(object sender, EventArgs e)
         {
-            lbEndTime.Text = Convert.ToString((EndTime - StartTime).TotalSeconds);
+            lbEndTime.Text = Convert.ToString((EndTime - StartTime).TotalSeconds - 0.16);
         }
 
         private void UpdateUIConsumerList(object sender, EventArgs e)
         {
             listViewCons.Items.Clear();
 
-            for (int i = 0; i < bestFit.Chromos.Count; i++)
+            for (int i = 0; i < bestFiF.Chromos.Count; i++)
             {
-                ListViewItem item = new ListViewItem(bestFit.Chromos[i].Name);
-                item.SubItems.Add(Convert.ToString(bestFit.Chromos[i].Status));
-                item.SubItems.Add(Convert.ToString(bestFit.Chromos[i].Load));
-                item.SubItems.Add(Convert.ToString(bestFit.Chromos[i].Priority));
+                ListViewItem item = new ListViewItem(bestFiF.Chromos[i].Name);
+                item.SubItems.Add(Convert.ToString(bestFiF.Chromos[i].Status));
+                item.SubItems.Add(Convert.ToString(bestFiF.Chromos[i].Load));
+                item.SubItems.Add(Convert.ToString(bestFiF.Chromos[i].Priority));
                 listViewCons.Items.Add(item);
             }            
         }
