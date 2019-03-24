@@ -8,26 +8,24 @@ namespace LoadSheddingGAOptimization
 {
     class Chromosome
     {
-        public List<Consumer> Chromos = new List<Consumer>();
-        public Boolean positiveFit;
-        public double fitness;
-        public int Age;
+        public List<Consumer> Consumers = new List<Consumer>(); // lista potrosaca
+        public Boolean positiveFit; // da li resenje odgovara
+        public double fitness; // fitnes vrednost
 
         public Chromosome(List<Consumer> lstOfCons, double loadToBeShedd, bool Init)
         {
+
             if (Init)
-            {
-                InitializeChromos(lstOfCons, loadToBeShedd);
-                int priority = CheckWhatPriorityShouldBeShedd(loadToBeShedd);
-                SetAllConsumersOffByPriority( priority-1);
-                SetRandomState(priority);
-                SetFitness(loadToBeShedd);
-                Age = 0;
+            { // inicijalizacija pocetnog hromozoma
+                InitializeChromos(lstOfCons, loadToBeShedd); // dodavanje 
+                int priority = CheckWhatPriorityShouldBeShedd(loadToBeShedd);// provera po kom prioritetu treba birati potrosace
+                SetAllConsumersOffByPriority( priority-1); //iskljuci sve konyumere po prioritetu
+                SetRandomState(priority);// postavi nasumicne statuse po prioritetu
+                SetFitness(loadToBeShedd); // evaluacija fitnesa
             }
             else
             {
-                InitializeChromos(lstOfCons, loadToBeShedd);
-                Age = 0;
+                InitializeChromos(lstOfCons, loadToBeShedd); // preuzmi gene roditelja
             }
         }
 
@@ -37,25 +35,26 @@ namespace LoadSheddingGAOptimization
             for (int i = 0; i < lst.Count; i++)
             {
                 cons = new Consumer(lst[i].Name, lst[i].Status, lst[i].Load, lst[i].Priority);
-                Chromos.Add(cons);
+                Consumers.Add(cons);
             }
         }
 
         private double ClalculateDifOFSheddConsAndNeededLoad(double loadToBeShedd)
-        {      
-            return GetSumOfSheddLoad() - loadToBeShedd;
+        {  // razlika sume snage odabranih potrosaca i potrebne vrednosti za rasterecenje    
+            return GetSumOfSheddLoad() - loadToBeShedd; 
         }
 
         public void SetFitness(double loadToBeShedd)
         {
             double diference;
-            diference = ClalculateDifOFSheddConsAndNeededLoad(loadToBeShedd);
-            positiveFit = (diference >= 0);
-            fitness = Math.Round(Math.Abs(GetSumOfSheddLoad() - loadToBeShedd), 1);
+            // razlika sume snage odabranih potrosaca i potrebne vrednosti za rasterecenje
+            diference = ClalculateDifOFSheddConsAndNeededLoad(loadToBeShedd); 
+            positiveFit = (diference >= 0); // da li je razlika pozitivna ili jednaka, ako jeste resenje odgovara
+            fitness = Math.Round(Math.Abs(diference), 1); // apsolutna vrednost razlike
         }        
 
         private void SetRandomState(int priority)
-        {
+        {//postavljanje statusa nasumicno po prioritetu zaa rasterecenje
             int indStart, indEnd;
             Random x = new Random();
             indStart = StartIndexInListOfPriority(priority);
@@ -64,293 +63,37 @@ namespace LoadSheddingGAOptimization
             {       
                 if (x.Next(100) < 50)
                 {
-                    Chromos[i].Status = 1;
+                    Consumers[i].Status = 1;
                 }
                 else
                 {
-                    Chromos[i].Status = 0;
+                    Consumers[i].Status = 0;
                 }
             }
         }
-
         public void Mutate(double loadToBeShedd)
         {
-            int priority = 0;
-            priority = CheckWhatPriorityShouldBeShedd(loadToBeShedd);
-            if (priority == 1)
-            {
-                if (GetSumOfSheddLoad() < loadToBeShedd)
-                {
-                    int c;
-                    bool change = true;
-                    Random x = new Random();
-                    for (int i = 0; i < 3; i++)
-                    {
-                        c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));        //Next(InitializeOrMutateByPriority(loadToBeShedd));
-                        Chromos[c].SetStatusOnOff(1);
-                    }
-                    while (GetSumOfSheddLoad() < loadToBeShedd)
-                    {
-                        c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));
-                        if (change)
-                        {
-                            for (int i = c; i < EndIndexInListOfPriority(priority); i++)
-                            {
-                                if (Chromos[i].Status == 0)
-                                {
-                                    Chromos[i].SetStatusOnOff(1);
-                                    break;
-                                }
-
-                            }
-                            change = false;
-                        }
-                        else
-                        {
-                            for (int i = c; i > StartIndexInListOfPriority(priority); i--)
-                            {
-                                if (Chromos[i].Status == 0)
-                                {
-                                    Chromos[i].SetStatusOnOff(1);
-                                    break;
-                                }
-                            }
-                            change = true;
-                        }
-                    }
-                }
-                else
-                {
-                    int c;
-                    bool change = true;
-                    Random x = new Random();
-                    for (int i = 0; i < 3; i++)
-                    {
-                        c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));
-                        Chromos[c].SetStatusOnOff(0);
-                    }
-                    while (GetSumOfSheddLoad() < loadToBeShedd)
-                    {
-                        c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));
-                        if (change)
-                        {
-                            for (int i = c; i < EndIndexInListOfPriority(priority); i++)
-                            {
-                                if (Chromos[i].Status == 0)
-                                {
-                                    Chromos[i].SetStatusOnOff(1);
-                                    break;
-                                }
-                            }
-                            change = false;
-                        }
-                        else
-                        {
-                            for (int i = c; i > StartIndexInListOfPriority(priority); i--)
-                            {
-                                if (Chromos[i].Status == 0)
-                                {
-                                    Chromos[i].SetStatusOnOff(1);
-                                    break;
-                                }
-
-                            }
-                            change = true;
-                        }
-                    }
-
-                }
-            }
-            else if(priority ==2)
-            {
-                SetAllConsumersOffByPriority(1);
-                if (GetSumOfSheddLoad() < loadToBeShedd)
-                {
-                    int c;
-                    bool change = true;
-                    Random x = new Random();
-                    for (int i = 0; i < 3; i++)
-                    {
-                        c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));        //Next(InitializeOrMutateByPriority(loadToBeShedd));
-                        Chromos[c].SetStatusOnOff(1);
-                    }
-                    while (GetSumOfSheddLoad() < loadToBeShedd)
-                    {
-                        c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));
-                        if (change)
-                        {
-                            for (int i = c; i < EndIndexInListOfPriority(priority); i++)
-                            {
-                                if (Chromos[i].Status == 0)
-                                {
-                                    Chromos[i].SetStatusOnOff(1);
-                                    break;
-                                }
-                            }
-                            change = false;
-                        }
-                        else
-                        {
-                            for (int i = c; i > StartIndexInListOfPriority(priority); i--)
-                            {
-                                if (Chromos[i].Status == 0)
-                                {
-                                    Chromos[i].SetStatusOnOff(1);
-                                    break;
-                                }
-                            }
-                            change = true;
-                        }
-                    }
-                }
-                else
-                {
-                    int c;
-                    bool change = true;
-                    Random x = new Random();
-                    for (int i = 0; i < 3; i++)
-                    {
-                        c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));
-                        Chromos[c].SetStatusOnOff(0);
-                    }
-                    while (GetSumOfSheddLoad() < loadToBeShedd)
-                    {
-                        c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));
-                        if (change)
-                        {
-                            for (int i = c; i < EndIndexInListOfPriority(priority); i++)
-                            {
-                                if (Chromos[i].Status == 0)
-                                {
-                                    Chromos[i].SetStatusOnOff(1);
-                                    break;
-                                }
-                            }
-                            change = false;
-                        }
-                        else
-                        {
-                            for (int i = c; i > StartIndexInListOfPriority(priority); i--)
-                            {
-                                if (Chromos[i].Status == 0)
-                                {
-                                    Chromos[i].SetStatusOnOff(1);
-                                    break;
-                                }
-                            }
-                            change = true;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                SetAllConsumersOffByPriority(2);
-                if(GetSumOfSheddLoad() < loadToBeShedd)
-                {
-                    int c;
-                    bool change = true;
-                    Random x = new Random();
-                    for (int i = 0; i < 3; i++)
-                    {
-                        c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));        //Next(InitializeOrMutateByPriority(loadToBeShedd));
-                        Chromos[c].SetStatusOnOff(1);
-                    }
-                    while (GetSumOfSheddLoad() < loadToBeShedd)
-                    {
-                        c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));
-                        if (change)
-                        {
-                            for (int i = c; i < EndIndexInListOfPriority(priority); i++)
-                            {
-                                if (Chromos[i].Status == 0)
-                                {
-                                    Chromos[i].SetStatusOnOff(1);
-                                    break;
-                                }
-                            }
-                            change = false;
-                        }
-                        else
-                        {
-                            for (int i = c; i > StartIndexInListOfPriority(priority); i--)
-                            {
-                                if (Chromos[i].Status == 0)
-                                {
-                                    Chromos[i].SetStatusOnOff(1);
-                                    break;
-                                }
-                            }
-                            change = true;
-                        }
-                    }
-                }
-                else
-                {
-                    int c;
-                    bool change = true;
-                    Random x = new Random();
-                    for (int i = 0; i < 3; i++)
-                    {
-                        c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));
-                        Chromos[c].SetStatusOnOff(0);
-                    }
-                    while (GetSumOfSheddLoad() < loadToBeShedd)
-                    {
-                        c = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));
-                        if (change)
-                        {
-                            for (int i = c; i < EndIndexInListOfPriority(priority); i++)
-                            {
-                                if (Chromos[i].Status == 0)
-                                {
-                                    Chromos[i].SetStatusOnOff(1);
-                                    break;
-                                }
-                            }
-                            change = false;
-                        }
-                        else
-                        {
-                            for (int i = c; i > StartIndexInListOfPriority(priority); i--)
-                            {
-                                if (Chromos[i].Status == 0)
-                                {
-                                    Chromos[i].SetStatusOnOff(1);
-                                    break;
-                                }
-                            }
-                            change = true;
-                        }
-                    }
-                }
-            }
-        }
-
-        public void Mutate(double loadToBeShedd, int i)
-        {
-            int priority = CheckWhatPriorityShouldBeShedd(loadToBeShedd);
-            int startInd = StartIndexInListOfPriority(priority);
-            int endInd = EndIndexInListOfPriority(priority);
+            int priority = CheckWhatPriorityShouldBeShedd(loadToBeShedd);//provera po kom prioritetu se vrsi rasterecenje
+            int startInd = StartIndexInListOfPriority(priority); // uzimanje startnog indeksa iz liste ya odredjeni prioritet
+            int endInd = EndIndexInListOfPriority(priority); //uzimanje poslednjeg indeksa iz liste za odredjeni prioritet
             int mutateAtInd = 0;
-
+            //mutacija 2 gena
             Random x = new Random();
             for (int k = 0; k < 2; k++)
             {
                 mutateAtInd = x.Next(StartIndexInListOfPriority(priority), EndIndexInListOfPriority(priority));        //Next(InitializeOrMutateByPriority(loadToBeShedd));
-                Chromos[mutateAtInd].MutateGene();
+                Consumers[mutateAtInd].MutateGene();
             }
-
         }
 
         private double GetSumOfSheddLoad()
-        {
+        { // suma snage iyabranih potrosaca za rasterecenje
             double sum = 0.0f;
-            for (int i = 0; i < Chromos.Count; i++)
+            for (int i = 0; i < Consumers.Count; i++)
             {
-                if (Chromos[i].Status == 1)
+                if (Consumers[i].Status == 1)
                 {
-                    sum += Chromos[i].Load;
+                    sum += Consumers[i].Load;
                 }
             }
             sum = Math.Round(sum, 1);
@@ -386,9 +129,9 @@ namespace LoadSheddingGAOptimization
             }
             for (int k = mutateAtInd; k < endInd; k++)
             {
-                if (Chromos[k].Status == oldStatus)
+                if (Consumers[k].Status == oldStatus)
                 {
-                    Chromos[k].SetStatusOnOff(newStatus);
+                    Consumers[k].SetStatusOnOff(newStatus);
                     ismutated = true;
                     break;
                 }
@@ -398,9 +141,9 @@ namespace LoadSheddingGAOptimization
 
                 for (int k = mutateAtInd; k >= startInd; k--)
                 {
-                    if (Chromos[k].Status == oldStatus)
+                    if (Consumers[k].Status == oldStatus)
                     {
-                        Chromos[k].SetStatusOnOff(newStatus);
+                        Consumers[k].SetStatusOnOff(newStatus);
                         ismutated = true;
                         break;
                     }
@@ -411,19 +154,19 @@ namespace LoadSheddingGAOptimization
         public int CheckWhatPriorityShouldBeShedd(double loadToBeShedd)
         {
             double sum =0;
-            for (int i = 0; i < Chromos.Count; i++)
+            for (int i = 0; i < Consumers.Count; i++)
             {
-                if (Chromos[i].Priority == 1)
+                if (Consumers[i].Priority == 1)
                 {
-                    sum += Chromos[i].Load;
+                    sum += Consumers[i].Load;
                     if (sum > loadToBeShedd)
                     {
                         return 1;
                     }
                 }
-                else if (Chromos[i].Priority == 2)
+                else if (Consumers[i].Priority == 2)
                 {
-                    sum += Chromos[i].Load;
+                    sum += Consumers[i].Load;
                     if (sum > loadToBeShedd)
                     {
                         return 2;
@@ -438,7 +181,7 @@ namespace LoadSheddingGAOptimization
         }
 
         private int NumbOfConsByPriority(int priority)
-        {
+        { // broj potrosaca po prioritetu
             int count = 0;
             if(priority == 0)
             {
@@ -446,9 +189,9 @@ namespace LoadSheddingGAOptimization
             }
             if(priority == 1)
             {
-                for (int i = 0; i < Chromos.Count; i++)
+                for (int i = 0; i < Consumers.Count; i++)
                 {
-                    if (Chromos[i].Priority == 1)
+                    if (Consumers[i].Priority == 1)
                     {
                         count++;
                     }
@@ -460,9 +203,9 @@ namespace LoadSheddingGAOptimization
             }
             else if(priority == 2)
             {
-                for (int i = 0; i < Chromos.Count; i++)
+                for (int i = 0; i < Consumers.Count; i++)
                 {
-                    if (Chromos[i].Priority == 1 || Chromos[i].Priority ==2)
+                    if (Consumers[i].Priority == 1 || Consumers[i].Priority ==2)
                     {
                         count++;
                     }
@@ -472,26 +215,14 @@ namespace LoadSheddingGAOptimization
                     }
                 }
             }
-            return Chromos.Count;
-        }
-
-        private bool CheckIfAllConsByPriorityOff(int priority)
-        {
-            for(int i=0; i< NumbOfConsByPriority(priority); i++)
-            {
-                if (Chromos[i].Priority == priority && Chromos[i].Status == 0)
-                {
-                    return false;
-                }
-            }
-            return true;
+            return Consumers.Count;
         }
 
         private int StartIndexInListOfPriority(int priority)
-        {
-            for (int i = 0; i < Chromos.Count; i++)
+        { // pocetni index u listi potrosaca po prioritetu
+            for (int i = 0; i < Consumers.Count; i++)
             {
-                if (priority == Chromos[i].Priority)
+                if (priority == Consumers[i].Priority)
                 {
                     return i;
                 }
@@ -500,13 +231,13 @@ namespace LoadSheddingGAOptimization
         }
 
         private int EndIndexInListOfPriority(int priority)
-        {
+        { // krajnji index u listi potrosaca po prioritetu
             int count = 0;
             if (priority == 1)
             {
-                for (int i = 0; i < Chromos.Count; i++)
+                for (int i = 0; i < Consumers.Count; i++)
                 {
-                    if (Chromos[i].Priority == 1)
+                    if (Consumers[i].Priority == 1)
                     {
                         count++;
                     }
@@ -518,9 +249,9 @@ namespace LoadSheddingGAOptimization
             }
             else if (priority == 2)
             {
-                for (int i = 0; i < Chromos.Count; i++)
+                for (int i = 0; i < Consumers.Count; i++)
                 {
-                    if (Chromos[i].Priority == 1 || Chromos[i].Priority == 2)
+                    if (Consumers[i].Priority == 1 || Consumers[i].Priority == 2)
                     {
                         count++;
                     }
@@ -530,22 +261,18 @@ namespace LoadSheddingGAOptimization
                     }
                 }
             }
-            return Chromos.Count;
+            return Consumers.Count;
         }
 
         private void SetAllConsumersOffByPriority(int priority)
-        {
+        { // iskljucivanje svih potrosaca po prioritetu
             int numbOfConsByPriority = NumbOfConsByPriority(priority);
             for (int i = 0; i < numbOfConsByPriority; i++)
             {
-                Chromos[i].Status = 1;
+                Consumers[i].Status = 1;
             }
         }
 
-        public void IncrementAge()
-        {
-            Age =Age + 1;
-        }
 
     }
 }

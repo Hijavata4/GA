@@ -18,18 +18,17 @@ namespace LoadSheddingGAOptimization
         private List<Generator> lstGens = new List<Generator>();
         private bool IsXmlNotLoaded = true;
         private bool IsViewListsFilled = false;
-        private bool StopGa;// = false;
+        private bool StopGa;
         private String On = "0";
         private String Off = "1";
         private int Generation= 0;
         private int BestFitAtGeneneration = 0;
-        private int BestFitChangeRate = 0;
         private int NumberOfIterations = 150;
         private double AverageFitness;
         private Random random = new Random();
 
-        private List<Chromosome> Population = new List<Chromosome>();
-        private Chromosome parent1;
+        private List<Chromosome> Population = new List<Chromosome>(); //inicijalizacija liste hromozoma, populacija
+        private Chromosome parent1;  
         private Chromosome parent2;
         private Chromosome Child1;
         private Chromosome Child2;
@@ -43,6 +42,7 @@ namespace LoadSheddingGAOptimization
 
         private double SumOfSheddloads(List<Consumer> lstCons)
         {
+            
             double sum = 0;
             for (int i = 0; i < lstCons.Count; i++)
             {
@@ -52,19 +52,20 @@ namespace LoadSheddingGAOptimization
                 }
             }
             return Math.Round(sum,1);
-        }
+        } 
 
         private void CreateInitPopulation(int populNumber, List<Consumer> lstCons, double sheddLoad)
         {
+            // kreiranje inicijalne populacije
             for (int i=0; i<populNumber; i++)
             {
-                Population.Add(new Chromosome(lstCons, sheddLoad, true));
-                Thread.Sleep(10);
+                Population.Add(new Chromosome(lstCons, sheddLoad, true)); //dodavanje u listu
             }
         }
 
         private void CalculateAverageFitness()
         {
+            //kalkulacija prosecne fitnes vrednosti
             AverageFitness = 0;
             double SumOfFitn = 0;
 
@@ -73,78 +74,77 @@ namespace LoadSheddingGAOptimization
                 SumOfFitn = SumOfFitn + Population[i].fitness;
             }
             AverageFitness = SumOfFitn / Population.Count;
-        }
+        } 
             
         void GeneticAlgorithm(List<Consumer> lstCons, double sheddLoad)
         {
-            bestFit = new Chromosome(lstCons, sheddLoad, false);
-            bestFit.SetFitness(sheddLoad);
-            StartTime = DateTime.Now;
-            Invoke(new EventHandler(UpdateUIStartTimeLabel)); 
+            bestFit = new Chromosome(lstCons, sheddLoad, false); // inicijalizacija bestFit
+            bestFit.SetFitness(sheddLoad);// set fitnes vrednosti za inicijalno stanje
+            StartTime = DateTime.Now; // pocetak GA
+            Invoke(new EventHandler(UpdateUIStartTimeLabel)); //update UI
             StopGa = false;
             Population.Clear();
             Generation = 1;
-            BestFitChangeRate = 0;
 
-            CreateInitPopulation(16, lstCons, sheddLoad);
+            CreateInitPopulation(16, lstCons, sheddLoad); // kreiranje inicijalne populacije
 
-            FitnessComparer comp = new FitnessComparer();
-            Population.Sort(comp);
+            FitnessComparer comp = new FitnessComparer(); // delagat za fitnes komparaciju
+            Population.Sort(comp); // sortiranje po fitnes vrednosti
 
-            FindBestFitInPopulation();
+            FindBestFitInPopulation(); //gledamo koje je najbolje resenje u inicijalnoj populaciji
             BestFitTime = DateTime.Now;
-            Invoke(new EventHandler(UpdateUIGenLabel));
+            Invoke(new EventHandler(UpdateUIGenLabel));// update UI
          //   Invoke(new EventHandler(UpdateUIBestFitLabels));
-            Invoke(new EventHandler(UpdateUIChart));
+            Invoke(new EventHandler(UpdateUIChart)); //update uI
 
-            while (StopGa == false)
+            while (!StopGa)
             {
-                ParentSelectionTS(Population);
-                UniformCrossover2(parent1, parent2, sheddLoad);
+                ParentSelectionTS(Population); // biramo roditelje
+                UniformCrossover1(parent1, parent2, sheddLoad); // rekombinacija
 
-                Population.Add(Child1);
-                Population.Add(Child2);
+                Population.Add(Child1);// dodavanje potomakau listu
+                Population.Add(Child2);// dodavanje potomaka u listu
 
-                ParentSelectionTS(Population);
-                UniformCrossover2(parent1, parent2, sheddLoad);
+                ParentSelectionTS(Population); // biramo roditelje 
+                UniformCrossover2(parent1, parent2, sheddLoad); //rekombinacija
 
-                Population.Add(Child1);
-                Population.Add(Child2);
+                Population.Add(Child1);// dodavanje potomaka u listu
+                Population.Add(Child2); // dodavanje potomaka u listu
 
-                Population.Sort(comp);
-                FindBestFitInPopulation();
+                Population.Sort(comp); // sortiramo populaciju po fitnes vrednosti
+                FindBestFitInPopulation(); // trazimo najbolje resenje
 
-                CalculateAverageFitness();
+                CalculateAverageFitness(); // proracun prosecne fitnes vrednosti u populaciji
 
-                Generation++;
-                Invoke(new EventHandler(UpdateUIGenLabel));
-                Invoke(new EventHandler(UpdateUIChart));
-                //BestFitChangeRate++;
+                Generation++; // inkrementujemo broj generacije
+                Invoke(new EventHandler(UpdateUIGenLabel));// Update UI
+                Invoke(new EventHandler(UpdateUIChart)); //Update UI
 
-                SurvivorSelectionFitnessBased(Population);//SurvivorSelectionAgeBased(Population);
+                SurvivorSelectionFitnessBased(Population);// odrzavanje populacije na 16
 
-                StopGa = StopGAoptimization();
+                StopGa = StopGAoptimization(); // provera kreterijuma za zaustavljanje GA
             }
-            EndTime = DateTime.Now;
-            Invoke(new EventHandler(UpdateUIEndTimeLabel));
+            EndTime = DateTime.Now; // Kraj GA
+            Invoke(new EventHandler(UpdateUIEndTimeLabel)); //update UI
         }
 
         void FindBestFitInPopulation()
         {
             for (int i = 0; i < Population.Count; i++)
             {
-                if ((Population[i].fitness < bestFit.fitness) & Population[i].positiveFit)
+                // kroz svaku iteraciju gledamo da li u populaciji imamo novo najbolje resenje
+                if ((Population[i].fitness < bestFit.fitness) & Population[i].positiveFit) 
                 {
-                    // BestFitChangeRate = 0;
-                    for (int k=0; k<Population[i].Chromos.Count;k++ )
+                    // ako smo nasli bolje resenje uzmi kombinaciju potrosaca
+                    for (int k=0; k<Population[i].Consumers.Count;k++ )
                     {
-                        bestFit.Chromos[k].Status = Population[i].Chromos[k].Status;
+                        bestFit.Consumers[k].Status = Population[i].Consumers[k].Status;
                     }
                     bestFit.fitness = Population[i].fitness;
                     BestFitAtGeneneration = Generation;
                     BestFitTime = DateTime.Now;
-                    Invoke(new EventHandler(UpdateUIBestFitLabels));
-                    Invoke(new EventHandler(UpdateUIConsumerList));
+                    Invoke(new EventHandler(UpdateUIBestFitLabels)); // update UI
+                    Invoke(new EventHandler(UpdateUIConsumerList)); // Update UI
                     break;
                 }
             }        
@@ -152,11 +152,11 @@ namespace LoadSheddingGAOptimization
 
         private bool StopGAoptimization()
         {
-            if (bestFit.fitness == 0)
+            if (bestFit.fitness == 0) // da l ismo nasli resenje?
             {
                 return true;
             }
-            else if (Generation < NumberOfIterations)
+            else if (Generation < NumberOfIterations) // da li smo stigli do ukupnog broja iteracija ?
             {
                 return false;
             }
@@ -168,126 +168,109 @@ namespace LoadSheddingGAOptimization
 
         private void UniformCrossover1(Chromosome xParent1, Chromosome xParent2, double sheddLoad)
         {
-            Child1 = null;
-            Child2 = null;
+            Child1 = null; // prvi potomak
+            Child2 = null; // drugi potomak
 
-            Child1 = new Chromosome(xParent1.Chromos, sheddLoad, false);
-            Child2 = new Chromosome(xParent2.Chromos, sheddLoad, false);
-            for (int i = 0; i < xParent1.Chromos.Count; i++)
+            Child1 = new Chromosome(xParent1.Consumers, sheddLoad, false); // uzima gene prvog roditelja
+            Child2 = new Chromosome(xParent2.Consumers, sheddLoad, false);// uzima gene drugog roditelja
+            //rekombinacija
+            for (int i = 0; i < xParent1.Consumers.Count; i++)
             {
                 if (i % 3 == 0)
                 {
-                    if (xParent1.Chromos[i].Status != xParent2.Chromos[i].Status)
+                    if (xParent1.Consumers[i].Status != xParent2.Consumers[i].Status)
                     {
-                        Child1.Chromos[i].Status = xParent2.Chromos[i].Status;
+                        Child1.Consumers[i].Status = xParent2.Consumers[i].Status; // prvi potomak uzima gene drugog roditelja
                     }
                 }  
             }
 
-            for (int k = 0; k < xParent1.Chromos.Count ; k++)
+            for (int k = 0; k < xParent1.Consumers.Count ; k++)
             {
                 if (k % 3 != 0)
                 {
-                    if (xParent1.Chromos[k].Status != xParent2.Chromos[k].Status)
+                    if (xParent1.Consumers[k].Status != xParent2.Consumers[k].Status)
                     {
-                        Child2.Chromos[k].Status = xParent1.Chromos[k].Status;
+                        Child2.Consumers[k].Status = xParent1.Consumers[k].Status; // drugi potomak uzima gene prvog roditelja
                     }
                 }
             }
 
             if(random.Next(0,100)< 10)
             {
-                Child1.Mutate(sheddLoad);
+                Child1.Mutate(sheddLoad); //mutacija pm=0.1
             }
             if (random.Next(0, 100) < 10)
             {
-              Child2.Mutate(sheddLoad);
+              Child2.Mutate(sheddLoad); //mutacija pm=0.1
             }
             
-            Child1.SetFitness(sheddLoad);
-            Child2.SetFitness(sheddLoad);
+            Child1.SetFitness(sheddLoad); // evaluacija fitnes vrednosti
+            Child2.SetFitness(sheddLoad); // evaluacija fitnes vrednosti
         }
 
         private void UniformCrossover2(Chromosome xParent1, Chromosome xParent2,double sheddLoad)
         {
-            Child1 = null;
-            Child2 = null;
-            Child1 = new Chromosome(xParent1.Chromos, sheddLoad, false);
-            Child2 = new Chromosome(xParent2.Chromos, sheddLoad, false);
+            Child1 = null; // prvi potomak
+            Child2 = null; // drugi potomak
+            Child1 = new Chromosome(xParent1.Consumers, sheddLoad, false); // uzima gene prvog roditelja
+            Child2 = new Chromosome(xParent2.Consumers, sheddLoad, false); // uzima gene drugog roditelja
 
-            for (int i = 0; i < xParent1.Chromos.Count; i+=2)
+            //rekombinacija
+            for (int i = 0; i < xParent1.Consumers.Count; i+=2)
             {
-                if (xParent1.Chromos[i].Status != xParent2.Chromos[i].Status)
+                if (xParent1.Consumers[i].Status != xParent2.Consumers[i].Status)
                 {
-                    Child1.Chromos[i].Status = xParent2.Chromos[i].Status;
+                    Child1.Consumers[i].Status = xParent2.Consumers[i].Status; //prvi potomak uzima gene drugog roditelja
                 }
             }
-            for (int k =1; k < xParent1.Chromos.Count ; k+=2)
+            for (int k =1; k < xParent1.Consumers.Count ; k+=2)
             {
-                if (xParent1.Chromos[k].Status != xParent2.Chromos[k].Status)
+                if (xParent1.Consumers[k].Status != xParent2.Consumers[k].Status)
                 {
-                    Child2.Chromos[k].Status = xParent1.Chromos[k].Status;
+                    Child2.Consumers[k].Status = xParent1.Consumers[k].Status;  // drugi potomak uzima gene prvog roditelja
                 }
             }
             if (random.Next(0, 100) < 10)
             {
-                Child1.Mutate(sheddLoad);
+                Child1.Mutate(sheddLoad); // mutacija pm=0.1
             }
             if (random.Next(0, 100) < 10)
             {
-                Child2.Mutate(sheddLoad);
+                Child2.Mutate(sheddLoad); //mutacija pm=0.1
             }
 
-            Child1.SetFitness(sheddLoad);
-            Child2.SetFitness(sheddLoad);
+            Child1.SetFitness(sheddLoad); // fitnes evaluacija
+            Child2.SetFitness(sheddLoad); // fitnes evaluacija
         }
 
         private void ParentSelectionTS(List<Chromosome> population)
         {
-            parent1 = null;
-            parent2 = null;
+            parent1 = null; //roditelj 1
+            parent2 = null; // roditelj 2
             int number = 0;
             List<int> indexList = new List<int>();
             List<Chromosome> parentSelList = new List<Chromosome>();
 
             for (int i=0; i<6; i++)
             {
-                do
+                do //do while kako bi se obezbedilo da se jedan hromozom bira jednom
                 {
                     number = random.Next(0, population.Count);
-                } while (indexList.Contains(number));
+                } while (indexList.Contains(number)); 
                 indexList.Add(number);
                 parentSelList.Add(population[number]);
             }
             FitnessComparer comp = new FitnessComparer();
-            parentSelList.Sort(comp);
+            parentSelList.Sort(comp); // sortiranje po fitnes
 
-            parent1 = parentSelList[0];
-            parent2 = parentSelList[1];
-        }
-
-        private Chromosome GetBestFitFromList(List<Chromosome> parentSelList)
-        {
-            FitnessComparer comp = new FitnessComparer();
-            parentSelList.Sort(comp);
-            return parentSelList[0];
-        }
-
-        private void SurvivorSelectionAgeBased(List<Chromosome> population)
-        {
-            for (int i = 0; i < population.Count; i++)
-            {
-                if (population[i].Age >= 10)
-                {
-                    population.Remove(population[i]);
-                    i--;
-                }
-            }
+            parent1 = parentSelList[0]; // odabir prvog roditelja
+            parent2 = parentSelList[1]; // odabir drugog roditelja
         }
 
         private void SurvivorSelectionFitnessBased(List<Chromosome> population)
         {
-           population.RemoveRange(16, 4);       
+           population.RemoveRange(16, 4);     // odrzavanje populacije na 16   
         }
 
         void InitializeGens(string xState, string name)
@@ -609,7 +592,7 @@ namespace LoadSheddingGAOptimization
         {
             lbBestFit.Text = Convert.ToString(bestFit.fitness);//.ToString("0.00");
             lbBestFitGen.Text = Convert.ToString(BestFitAtGeneneration);
-            lbLoadShedd.Text = Convert.ToString(SumOfSheddloads(bestFit.Chromos)); //SumOfSheddloads(bestFit.Chromos).ToString("0.00"); 
+            lbLoadShedd.Text = Convert.ToString(SumOfSheddloads(bestFit.Consumers)); //SumOfSheddloads(bestFit.Consumers).ToString("0.00"); 
             lbBestFitTime.Text = Convert.ToString((BestFitTime - StartTime).TotalSeconds);
         }
         
@@ -631,12 +614,12 @@ namespace LoadSheddingGAOptimization
         {
             listViewCons.Items.Clear();
 
-            for (int i = 0; i < bestFit.Chromos.Count; i++)
+            for (int i = 0; i < bestFit.Consumers.Count; i++)
             {
-                ListViewItem item = new ListViewItem(bestFit.Chromos[i].Name);
-                item.SubItems.Add(Convert.ToString(bestFit.Chromos[i].Status));
-                item.SubItems.Add(Convert.ToString(bestFit.Chromos[i].Load));
-                item.SubItems.Add(Convert.ToString(bestFit.Chromos[i].Priority));
+                ListViewItem item = new ListViewItem(bestFit.Consumers[i].Name);
+                item.SubItems.Add(Convert.ToString(bestFit.Consumers[i].Status));
+                item.SubItems.Add(Convert.ToString(bestFit.Consumers[i].Load));
+                item.SubItems.Add(Convert.ToString(bestFit.Consumers[i].Priority));
                 listViewCons.Items.Add(item);
             }            
         }

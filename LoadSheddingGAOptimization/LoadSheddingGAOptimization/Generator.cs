@@ -12,11 +12,11 @@ namespace LoadSheddingGAOptimization
         public double P;
         public int Status; //On-0 , Off-1
 
-        public Generator(string name, double xP, int Status)
+        public Generator(string name, double xP, int status)
         {
             Name = name;
             P = xP;
-            Status = Status;
+            Status = status;
         }
     }
 }

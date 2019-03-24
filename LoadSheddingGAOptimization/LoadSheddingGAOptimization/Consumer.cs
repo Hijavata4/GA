@@ -8,7 +8,7 @@ namespace LoadSheddingGAOptimization
 {
     class Consumer
     {
-        public string Name;
+        public string Name; // ime consumera
         private int status; // 0 - On , 1- Off
         public int Status
         {
@@ -21,13 +21,13 @@ namespace LoadSheddingGAOptimization
                 return status;
             }
         } 
-        public double Load;
-        public int Priority;
+        public double Load; // opterecenje MW
+        public int Priority;// prioritet
         public int Fitness { get; set; }
 
 
-        public Consumer(string name, int Status, double load, int priority)
-        {
+        public Consumer(string name, int status, double load, int priority)
+        { // konstruktor
             Name = name;
             Status = Status;
             Load = Math.Round(load, 1);
@@ -35,7 +35,7 @@ namespace LoadSheddingGAOptimization
         }
 
            public void MutateGene()
-           {
+           { //mutacija
                if (Status ==  0)
                {
                     Status = 1;
